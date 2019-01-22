@@ -188,5 +188,8 @@
   <ItemGroup>
     <Resource Include="TextFile1.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RedX.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
