@@ -1,8 +1,7 @@
-image: microsoft/dotnet-framework:4.7.2-sdk
+image: microsoft/dotnet-framework
 
 stages:
     - build
-    - test
 
 variables:
     test: "Example.Test"
