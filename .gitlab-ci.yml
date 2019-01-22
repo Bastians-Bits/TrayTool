@@ -8,7 +8,7 @@ variables:
     test: "Example.Test"
 
 before_script:
-    - "cd src"
+    - "cd TrayTool"
     - "dotnet restore"
 
 build:
