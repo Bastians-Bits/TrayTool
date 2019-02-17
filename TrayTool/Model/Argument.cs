@@ -1,31 +1,11 @@
 ﻿namespace TrayTool.Model
 {
-    public class Argument : AbstractModel
+    public class Argument : BaseModel
     {
-        private string _key;
         private string _value;
+        private string _key;
 
-        public string Value
-        {
-            get => _value; set
-            {
-                if (_value != value)
-                {
-                    _value = value;
-                    OnPropertyChanged("Value");
-                }
-            }
-        }
-        public string Key
-        {
-            get => _key; set
-            {
-                if (_key != value)
-                {
-                    _key = value;
-                    OnPropertyChanged("Key");
-                }
-            }
-        }
+        public string Value { get => _value; set => SetProperty(ref _value, value); }
+        public string Key { get => _key; set => SetProperty(ref _key, value); }
     }
 }

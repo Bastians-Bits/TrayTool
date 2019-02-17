@@ -1,20 +1,9 @@
-﻿using System.Collections.ObjectModel;
-
-namespace TrayTool.Model
+﻿namespace TrayTool.Model
 {
-    public abstract class AbstractItem : BaseModel
+    public abstract class AbstractItem : Seperator
     {
         private string _name;
 
-        public string Name { get => _name;
-            set
-            {
-                if (value != _name)
-                {
-                    _name = value;
-                    OnPropertyChanged("Name");
-                }
-            }
-        }
+        public string Name { get => _name; set => SetProperty(ref _name, value); }
     }
 }

@@ -1,30 +1,30 @@
 ﻿using System.Windows;
 using System.Collections.ObjectModel;
 using TrayTool.Model;
+using TrayTool.ViewModel;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 
-namespace TrayTool
+namespace TrayTool.View
 {
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region Class Variables
-
-        public ObservableCollection<BaseModel> Items { get; set; }
+        
         private NotifyIcon systemTray = new NotifyIcon();
 
-        #endregion
+        MainViewModel viewModel;
 
-        #region Constructor
 
         public MainWindow()
         {
+            viewModel = new MainViewModel();
+
             Directory dir1 = new Directory() { Name = "Dir 1" };
             Item item1 = new Item()
             {
@@ -38,6 +38,9 @@ namespace TrayTool
             dir1.Children.Add(item1);
             Item item2 = new Item() { Name = "Item 2", Parent = dir1 };
             dir1.Children.Add(item2);
+
+            Seperator seperator = new Seperator() { Parent = dir1 };
+            dir1.Children.Add(seperator);
 
             Directory dir2 = new Directory() { Name = "Dir 2", Parent = dir1 };
             dir1.Children.Add(dir2);
@@ -55,24 +58,22 @@ namespace TrayTool
 
 
 
-            Items = new ObservableCollection<BaseModel>();
-            Items.Add(dir1);
-            Items.Add(dir3);
+            viewModel.Items = new ObservableCollection<Seperator>();
+            viewModel.Items.Add(dir1);
+            viewModel.Items.Add(dir3);
+
+            DataContext = viewModel;
 
             InitializeComponent();
-            DataContext = this;
             Closing += OnWindowClosing;
         }
 
-        #endregion
-
-        #region System Tray Methods
 
         public void OnWindowClosing(object sender, CancelEventArgs e)
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            List<BaseModel> items = new List<BaseModel>(Items);
+            List<Seperator> items = new List<Seperator>(viewModel.Items);
 
             try
             {
@@ -116,141 +117,11 @@ namespace TrayTool
             systemTray.Visible = false;
         }
 
-        #endregion
-
-        #region Buttons
-
-        private void BtnAdd_Click(object sender, RoutedEventArgs e)
+        private System.Windows.Controls.TreeViewItem GetContainerFromStuff(Seperator stuff)
         {
-            if (treeView.SelectedItem != null && treeView.SelectedItem is BaseModel)
-            {
-                BaseModel selected = (BaseModel) treeView.SelectedItem;
-
-                if (selected is Directory)
-                {
-                    ((Directory)selected).Children.Add(CreateNewInstance(CbAddChooser.SelectedIndex, (Directory) selected));
-                }
-                else
-                {
-                    // Search for Parent dir and add it there
-                    if (selected.Parent != null)
-                    {
-                        int index = selected.Parent.Children.IndexOf(selected) + 1;
-
-                        // Add it to the parent                   
-                        selected.Parent.Children.Insert(index, CreateNewInstance(CbAddChooser.SelectedIndex, selected.Parent));
-                    }
-                    else
-                    {
-                        int index = Items.IndexOf(selected) + 1;
-
-                        // No parent, the currently selected is a root element
-                        Items.Insert(index + 1, CreateNewInstance(CbAddChooser.SelectedIndex, null));
-                    }
-                }
-            }
-            else
-            {
-                // No parent dir, we have to create a new root element
-                Items.Add(CreateNewInstance(CbAddChooser.SelectedIndex, null));
-            }
-        }
-        
-        private void BtnRemove_Click(object sender, RoutedEventArgs e)
-        {
-            var selected = treeView.SelectedItem;
-
-            if (selected != null && selected is BaseModel)
-            {
-                //TODO Check for children and warn
-                if (((BaseModel)selected).Parent != null)
-                {
-                    ((BaseModel)selected).Parent.Children.Remove((BaseModel)selected);
-                } else
-                {
-                    // We have no parent, it has to be a root element
-                    for (int i = 0; i < Items.Count; i++)
-                    {
-                        // We won't use CompareTo, since the values are not relevant (duplicates are allowes), but the instance won't lie
-                        if (Items[i] == selected)
-                        {
-                            Items.RemoveAt(i);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-            var selected = treeView.SelectedItem;
-
-            if (selected != null && selected is BaseModel)
-            {
-                selected = (BaseModel)selected;
-
-                if (selected is Item)
-                {
-                    GridItem.Visibility = Visibility.Visible;
-                    GridDirectory.Visibility = Visibility.Collapsed;
-                    GridEmpty.Visibility = Visibility.Collapsed;
-                }
-                else if (selected is Directory)
-                {
-                    GridDirectory.Visibility = Visibility.Visible;
-                    GridItem.Visibility = Visibility.Collapsed;
-                    GridEmpty.Visibility = Visibility.Collapsed;
-                }
-                else if (selected is Seperator)
-                {
-                    GridDirectory.Visibility = Visibility.Collapsed;
-                    GridItem.Visibility = Visibility.Collapsed;
-                    GridEmpty.Visibility = Visibility.Visible;
-                }
-            }
-            else
-            {
-                GridEmpty.Visibility = Visibility.Visible;
-                GridDirectory.Visibility = Visibility.Collapsed;
-                GridItem.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        #endregion
-
-        #region Helper
-
-        public BaseModel CreateNewInstance(int target, Directory parent)
-        {
-            switch(target)
-            {
-                case 0:
-                    return new Item()
-                    {
-                        Name = "New Item",
-                        Parent = parent
-                    };
-                case 1:
-                    return new Directory()
-                    {
-                        Name = "New Directory",
-                        Parent = parent
-                    };
-                case 2:
-                    return new Seperator()
-                    {
-                        Parent = parent
-                    };
-            }
-            return null;
-        }
-
-        private System.Windows.Controls.TreeViewItem GetContainerFromStuff(BaseModel stuff)
-        {
-            Stack<BaseModel> _stack = new Stack<BaseModel>();
+            Stack<Seperator> _stack = new Stack<Seperator>();
             _stack.Push(stuff);
-            BaseModel parent = stuff.Parent;
+            Seperator parent = stuff.Parent;
 
             while (parent != null)
             {
@@ -281,10 +152,7 @@ namespace TrayTool
             return container;
         }
 
-        #endregion
-
-        #region Drag n Drop
-
+        
         private Point _lastMouseDown;
 
 
@@ -307,7 +175,7 @@ namespace TrayTool
                 if ((Math.Abs(currentPosition.X - _lastMouseDown.X) > 2.0) ||
                     (Math.Abs(currentPosition.Y - _lastMouseDown.Y) > 2.0))
                 {
-                    BaseModel selectedItem = (BaseModel)treeView.SelectedItem;
+                    Seperator selectedItem = (Seperator)treeView.SelectedItem;
                     if (selectedItem != null)
                     {
                         System.Windows.Controls.TreeViewItem container = GetContainerFromStuff(selectedItem);
@@ -329,8 +197,8 @@ namespace TrayTool
             System.Windows.Controls.TreeViewItem container = GetNearestContainer(e.OriginalSource as UIElement);
             if (container != null)
             {
-                BaseModel sourceStuff = (BaseModel)e.Data.GetData(e.Data.GetFormats()[0]);
-                BaseModel targetStuff = (BaseModel)container.Header;
+                Seperator sourceStuff = (Seperator)e.Data.GetData(e.Data.GetFormats()[0]);
+                Seperator targetStuff = (Seperator)container.Header;
                 if ((sourceStuff != null) && (targetStuff != null))
                 {
                     if (sourceStuff != targetStuff)
@@ -342,7 +210,7 @@ namespace TrayTool
                         }
                         else
                         {
-                            Items.Remove(sourceStuff);
+                            viewModel.Items.Remove(sourceStuff);
                         }
                         // Add it to the new one
                         if (targetStuff is Directory)
@@ -363,7 +231,7 @@ namespace TrayTool
                             }
                             else
                             {
-                                Items.Add(sourceStuff);
+                                viewModel.Items.Add(sourceStuff);
                                 sourceStuff.Parent = null;
                             }
                         }
@@ -372,21 +240,24 @@ namespace TrayTool
             }
             else
             {
-                BaseModel sourceStuff = (BaseModel)e.Data.GetData(e.Data.GetFormats()[0]);
+                Seperator sourceStuff = (Seperator)e.Data.GetData(e.Data.GetFormats()[0]);
 
                 if (sourceStuff.Parent != null)
                 {
                     sourceStuff.Parent.Children.Remove(sourceStuff);
                     sourceStuff.Parent = null;
-                    Items.Add(sourceStuff);
+                    viewModel.Items.Add(sourceStuff);
                 } 
                 else
                 {
-                    Items.Move(Items.IndexOf(sourceStuff), Items.Count - 1);
+                    viewModel.Items.Move(viewModel.Items.IndexOf(sourceStuff), viewModel.Items.Count - 1);
                 }
             }
         }
 
-        #endregion
+        private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            viewModel.TreeView_Selected = (Seperator) treeView.SelectedItem;
+        }
     }
 }

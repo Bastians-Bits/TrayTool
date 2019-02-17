@@ -1,37 +1,22 @@
-﻿namespace TrayTool.Model
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+namespace TrayTool.Model
 {
-    public class BaseModel : AbstractModel
+    public class BaseModel : INotifyPropertyChanged
     {
-        public Directory _parent;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        protected string _image;
-      
-        public string Image
+        protected bool SetProperty<T>(ref T field, T newValue, [CallerMemberName]string propertyName = null)
         {
-            get { return _image; }
-            set {
-                if (value != _image)
-                {
-                    _image = value;
-                    OnPropertyChanged("Image");
-                }
-            }
-        }
-
-        public Directory Parent
-        {
-            set
+            if (!EqualityComparer<T>.Default.Equals(field, newValue))
             {
-                if (_parent != value)
-                {
-                    _parent = value;
-                    OnPropertyChanged("Parent");
-                }
+                field = newValue;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                return true;
             }
-            get
-            {
-                return _parent;
-            }
+            return false;
         }
     }
 }

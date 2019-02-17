@@ -7,35 +7,12 @@ namespace TrayTool.Model
         private string _path;
         private ObservableCollection<Argument> _arguments;
 
+        public string Path { get => _path; set => SetProperty(ref _path, value); }
+        public ObservableCollection<Argument> Arguments { get => _arguments; set => SetProperty(ref _arguments, value); }
+
         public Item()
         {
             Image = "/TrayTool;component/Resources/Shortcut.png";
-        }
-
-        public string Path
-        {
-            get => _path;
-            set
-            {
-                if (_path != value)
-                {
-                    _path = value;
-                    OnPropertyChanged("Path");
-                }
-            }
-        }
-        
-        public ObservableCollection<Argument> Arguments
-        {
-            get => _arguments;
-            set
-            {
-                if (_arguments != value)
-                {
-                    _arguments = value;
-                    OnPropertyChanged("Arguments");
-                } 
-            }
         }
     }
 }
