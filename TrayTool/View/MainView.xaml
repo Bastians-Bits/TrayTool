@@ -11,6 +11,7 @@
     <Window.Resources>
         <local:BoundaryConverter x:Key="bondaryConverter" />
         <local:IndentConverter x:Key="indentConverter" />
+        <local:ImageConverter x:Key="imageConver" />
     </Window.Resources>
     <Grid ShowGridLines="False">
         <Grid.ColumnDefinitions>
@@ -30,7 +31,7 @@
                 <!-- Directory -->
                 <HierarchicalDataTemplate DataType="{x:Type Model:Directory}" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Image}" Width="10"/>
+                        <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15"/>
                         <TextBlock Text="   "/>
                         <TextBlock Text="{Binding Name}" />
                     </StackPanel>
@@ -39,7 +40,7 @@
                 <!-- Item -->
                 <DataTemplate DataType="{x:Type Model:Item}">
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Image}" Width="10"/>
+                        <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15"/>
                         <TextBlock Text="   "/>
                         <TextBlock Text="{Binding Name}" />
                     </StackPanel>
@@ -48,7 +49,7 @@
                 <!-- Seperator-->
                 <DataTemplate DataType="{x:Type Model:Seperator}">
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Image}" Width="10"/>
+                        <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15"/>
                     </StackPanel>
                 </DataTemplate>
 
@@ -62,74 +63,75 @@
                 <ContentPresenter.Resources>
                     <!-- Grid Item -->
                     <DataTemplate DataType="{x:Type Model:Item}">
-                        <Grid ShowGridLines="False" Visibility="Visible" x:Name="GridItem"
+                        <Grid ShowGridLines="False" x:Name="GridItem"
                             Height="{Binding ElementName=PanelRight, Path=ActualHeight, Converter={StaticResource bondaryConverter}, ConverterParameter=32}">
-                                <Grid.ColumnDefinitions>
-                                    <!-- 0: Margin Left -->
-                                    <ColumnDefinition Width="20" />
-                                    <!-- 1: Fist Column of Elements -->
-                                    <ColumnDefinition Width="*" />
-                                    <!-- 2: Margin Between the Elements -->
-                                    <ColumnDefinition Width="10" />
-                                    <!-- 3: Second Column of Elements -->
-                                    <ColumnDefinition Width="300" />
-                                    <!-- 4: Margin Between the Elements -->
-                                    <ColumnDefinition Width="10" />
-                                    <!-- 5: Third Column of Elements -->
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <!-- 0: Margin Left -->
+                                <ColumnDefinition Width="20" />
+                                <!-- 1: Fist Column of Elements -->
+                                <ColumnDefinition Width="*" />
+                                <!-- 2: Margin Between the Elements -->
+                                <ColumnDefinition Width="10" />
+                                <!-- 3: Second Column of Elements -->
+                                <ColumnDefinition Width="300" />
+                                <!-- 4: Margin Between the Elements -->
+                                <ColumnDefinition Width="10" />
+                                <!-- 5: Third Column of Elements -->
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                                <Grid.RowDefinitions>
-                                    <!-- 0: Margin Top -->
-                                    <RowDefinition Height="20" />
-                                    <!-- 1: First Row of Elements -->
-                                    <RowDefinition Height="20" />
-                                    <!-- 2: Margin Between the Elements -->
-                                    <RowDefinition Height="5" />
-                                    <!-- 3: Second Row of Elements-->
-                                    <RowDefinition Height="20" />
-                                    <!-- 4: Margin Between the Elements -->
-                                    <RowDefinition Height="5" />
-                                    <!-- 5: Third Row of Elements -->
-                                    <RowDefinition Height="20" />
-                                    <!-- 6: Margin Between the Elements -->
-                                    <RowDefinition Height="5" />
-                                    <!-- 7: Fourth Row of Elements-->
-                                    <RowDefinition Height="300" />
-                                </Grid.RowDefinitions>
+                            <Grid.RowDefinitions>
+                                <!-- 0: Margin Top -->
+                                <RowDefinition Height="20" />
+                                <!-- 1: First Row of Elements -->
+                                <RowDefinition Height="20" />
+                                <!-- 2: Margin Between the Elements -->
+                                <RowDefinition Height="5" />
+                                <!-- 3: Second Row of Elements-->
+                                <RowDefinition Height="20" />
+                                <!-- 4: Margin Between the Elements -->
+                                <RowDefinition Height="5" />
+                                <!-- 5: Third Row of Elements -->
+                                <RowDefinition Height="20" />
+                                <!-- 6: Margin Between the Elements -->
+                                <RowDefinition Height="5" />
+                                <!-- 7: Fourth Row of Elements-->
+                                <RowDefinition Height="300" />
+                            </Grid.RowDefinitions>
 
-                                <!-- First Row: Name -->
-                                <TextBlock Grid.Row="1" Grid.Column="1" Text="Name: " />
-                                <TextBox Grid.Row="1" Grid.Column="3" Width="150" HorizontalAlignment="Left" Text="{Binding Name}" />
+                            <!-- First Row: Name -->
+                            <TextBlock Grid.Row="1" Grid.Column="1" Text="Name: " />
+                            <TextBox Grid.Row="1" Grid.Column="3" Width="150" HorizontalAlignment="Left" Text="{Binding Name}" />
 
-                                <!-- Second Row: Path -->
-                                <TextBlock Grid.Row="3" Grid.Column="1" Text="Path: " />
-                                <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding Path}" />
-                                <Button Grid.Row="3" Grid.Column="5" Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ButtonBrowserPath}" >
-                                    <TextBlock Text="Browse" />
-                                </Button>
+                            <!-- Second Row: Path -->
+                            <TextBlock Grid.Row="3" Grid.Column="1" Text="Path: " />
+                            <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding Path}" />
+                            <Button Grid.Row="3" Grid.Column="5" Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.ButtonBrowserPath}" >
+                                <TextBlock Text="Browse" />
+                            </Button>
 
-                                <!-- Third Row: (Empty for the moment) -->
+                            <!-- Third Row: (Empty for the moment) -->
 
-                                <!-- Fourth Row: Arguments -->
-                                <DataGrid Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" 
+                            <!-- Fourth Row: Arguments -->
+                            <DataGrid Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="3" 
                               ItemsSource="{Binding Arguments}" AutoGenerateColumns="False"
                               CanUserReorderColumns="False"
                               CanUserResizeRows="False"
                               CanUserAddRows="True"
                               CanUserDeleteRows="True">
-                                    <DataGrid.Columns>
-                                        <DataGridTextColumn Header="Key" Binding="{Binding Key}" />
-                                        <DataGridTextColumn Header="Value" Binding="{Binding Value}" />
-                                    </DataGrid.Columns>
-                                </DataGrid>
-                            </Grid>
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Key" Binding="{Binding Key}" />
+                                    <DataGridTextColumn Header="Value" Binding="{Binding Value}" />
+                                    <DataGridTextColumn Header="Concatenator" Binding="{Binding Concatenator}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
 
                     </DataTemplate>
 
                     <!-- Grid Directory -->
                     <DataTemplate DataType="{x:Type Model:Directory}">
-                        <Grid ShowGridLines="False" Visibility="Collapsed" x:Name="GridDirectory"
+                        <Grid ShowGridLines="False" x:Name="GridDirectory"
                             Height="{Binding ElementName=PanelRight, Path=ActualHeight, Converter={StaticResource bondaryConverter}, ConverterParameter=32}">
                             <Grid.ColumnDefinitions>
                                 <!-- 0: Margin Left -->
@@ -165,12 +167,12 @@
 
                     <!-- Grid Empty-->
                     <DataTemplate DataType="{x:Type Model:Seperator}">
-                        <Grid ShowGridLines="False" Visibility="Collapsed" x:Name="GridEmpty"
-                            Height="{Binding ElementName=PanelRight, Path=ActualHeight, Converter={StaticResource bondaryConverter}, ConverterParameter=32}"/>
+                        <Grid ShowGridLines="False" x:Name="GridEmpty"
+                            Height="{Binding ElementName=PanelRight, Path=ActualHeight, Converter={StaticResource bondaryConverter}, ConverterParameter=32}" />
                     </DataTemplate>
                 </ContentPresenter.Resources>
             </ContentPresenter>
-            
+
             <!-- Grid Buttons -->
             <Grid Width="{Binding ElementName=PanelRight, Path=ActualWidth, Converter={StaticResource bondaryConverter}, ConverterParameter=0}">
                 <Grid.ColumnDefinitions>

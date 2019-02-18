@@ -7,6 +7,8 @@ using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using System.Windows.Input;
+using System.Xml.Serialization;
+using System.Text;
 
 namespace TrayTool.View
 {
@@ -20,49 +22,24 @@ namespace TrayTool.View
 
         MainViewModel viewModel;
 
+        private string xmlPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\TrayTool.xml";
+
 
         public MainWindow()
         {
             viewModel = new MainViewModel();
-
-            Directory dir1 = new Directory() { Name = "Dir 1" };
-            Item item1 = new Item()
-            {
-                Name = "Item 1",
-                Parent = dir1,
-                Arguments = new ObservableCollection<Argument>()
-                {
-                    new Argument() { Key = "Test", Value = "Test"  }
-                }
-            };
-            dir1.Children.Add(item1);
-            Item item2 = new Item() { Name = "Item 2", Parent = dir1 };
-            dir1.Children.Add(item2);
-
-            Seperator seperator = new Seperator() { Parent = dir1 };
-            dir1.Children.Add(seperator);
-
-            Directory dir2 = new Directory() { Name = "Dir 2", Parent = dir1 };
-            dir1.Children.Add(dir2);
-            Item item3 = new Item() { Name = "Item 3", Parent = dir2 };
-            dir2.Children.Add(item3);
-            Item item4 = new Item() { Name = "Item 4", Parent = dir2 };
-            dir2.Children.Add(item4);
-
-
-            Directory dir3 = new Directory() { Name ="Dir 3" };
-            Item item5 = new Item() { Name = "Item 5", Parent = dir3 };
-            dir3.Children.Add(item5);
-            Item item6 = new Item() { Name = "Item 6", Parent = dir3 };
-            dir3.Children.Add(item6);
-
-
-
-            viewModel.Items = new ObservableCollection<Seperator>();
-            viewModel.Items.Add(dir1);
-            viewModel.Items.Add(dir3);
-
+            viewModel.Items = new ObservableCollection<BaseModel>();
             DataContext = viewModel;
+
+            if (System.IO.File.Exists(xmlPath))
+            {
+                SerializeWrapper xmlData = FromXML<SerializeWrapper>(xmlPath);
+                foreach (BaseModel baseModel in xmlData.elements)
+                {
+                    FixIncocistentItems(baseModel);
+                }
+                viewModel.Items = new ObservableCollection<BaseModel>(xmlData.elements);
+            }
 
             InitializeComponent();
             Closing += OnWindowClosing;
@@ -71,9 +48,12 @@ namespace TrayTool.View
 
         public void OnWindowClosing(object sender, CancelEventArgs e)
         {
+            string xmlData = ToXML(new SerializeWrapper(new List<BaseModel>(viewModel.Items)));
+            System.IO.File.WriteAllText(xmlPath, xmlData);
+
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            List<Seperator> items = new List<Seperator>(viewModel.Items);
+            List<BaseModel> items = new List<BaseModel>(viewModel.Items);
 
             try
             {
@@ -258,6 +238,41 @@ namespace TrayTool.View
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             viewModel.TreeView_Selected = (Seperator) treeView.SelectedItem;
+        }
+
+        public T FromXML<T>(string xml)
+        {
+            using (System.IO.StreamReader stringReader = new System.IO.StreamReader(xml))
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
+                return (T)serializer.Deserialize(stringReader);
+            }
+        }
+
+        public string ToXML<T>(T obj)
+        {
+            using (System.IO.StringWriter stringWriter = new System.IO.StringWriter(new StringBuilder()))
+            {
+                XmlSerializer xmlSerializer = new XmlSerializer(typeof(T));
+                xmlSerializer.Serialize(stringWriter, obj);
+                return stringWriter.ToString();
+            }
+        }
+
+        private void FixIncocistentItems(BaseModel baseModel)
+        {
+            // Fix Parents
+            if (baseModel is Directory)
+            {
+                Directory dir = (Directory) baseModel;
+                foreach(BaseModel child in dir.Children)
+                {
+                    Seperator seperator = (Seperator)child;
+                    seperator.Parent = dir;
+                    FixIncocistentItems(seperator);
+                }
+            }
+
         }
     }
 }

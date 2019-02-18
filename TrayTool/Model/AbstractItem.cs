@@ -1,5 +1,8 @@
-﻿namespace TrayTool.Model
+﻿using System;
+
+namespace TrayTool.Model
 {
+    [Serializable()]
     public abstract class AbstractItem : Seperator
     {
         private string _name;

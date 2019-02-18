@@ -11,7 +11,7 @@ namespace TrayTool.ViewModel
     public class MainViewModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        private ObservableCollection<Seperator> _items;
+        private ObservableCollection<BaseModel> _items;
 
         public ICommand ButtonAdd { get; private set; }
         public ICommand ButtonRemove { get; private set; }
@@ -19,7 +19,7 @@ namespace TrayTool.ViewModel
         public ICommand TreeView { get; private set; }
         public ICommand CbChooser { get; private set; }
 
-        public ObservableCollection<Seperator> Items { get => _items; set => SetProperty(ref _items, value); }
+        public ObservableCollection<BaseModel> Items { get => _items; set => SetProperty(ref _items, value); }
 
         public Seperator TreeView_Selected { get; set; }
         public int CbAddChooser_Selected { get; set; }
@@ -62,7 +62,7 @@ namespace TrayTool.ViewModel
                     }
                     else
                     {
-                        int index = Items.IndexOf(TreeView_Selected) + 1;
+                        int index = Items.IndexOf(TreeView_Selected);
 
                         // No parent, the currently selected is a root element
                         Items.Insert(index + 1, CreateNewInstance(CbAddChooser_Selected, null));

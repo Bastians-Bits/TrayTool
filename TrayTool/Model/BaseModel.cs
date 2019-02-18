@@ -1,10 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Xml.Serialization;
 
 namespace TrayTool.Model
 {
-    public class BaseModel : INotifyPropertyChanged
+    [XmlInclude(typeof(Directory))]
+    [XmlInclude(typeof(Item))]
+    [XmlInclude(typeof(Seperator))]
+    [System.Serializable()]
+    public abstract class BaseModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -1,16 +1,19 @@
 ﻿using System.Collections.ObjectModel;
+using System.Xml.Serialization;
 
 namespace TrayTool.Model
 {
+    [System.Serializable()]
     public class Directory : AbstractItem
     {
-        private ObservableCollection<Seperator> _children = new ObservableCollection<Seperator>();
+        [XmlIgnore]
+        private ObservableCollection<BaseModel> _children = new ObservableCollection<BaseModel>();
 
-        public ObservableCollection<Seperator> Children { get => _children; set => SetProperty(ref _children, value); }
+        public ObservableCollection<BaseModel> Children { get => _children; set => SetProperty(ref _children, value); }
 
         public Directory()
         {
-            Image = "/TrayTool;component/Resources/Folder.png";
+            Image = CreateImage("/TrayTool;component/Resources/Folder.png");
         }
 
        

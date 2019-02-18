@@ -9,14 +9,14 @@ namespace TrayTool
 {
     class MenuGenerator
     {
-        public ContextMenuStrip GeneratorMenu(List<Seperator> models)
+        public ContextMenuStrip GeneratorMenu(List<BaseModel> models)
         {
             ContextMenuStrip menu = CreateSubMenu(null, models);
 
             return menu;
         }
 
-        private ContextMenuStrip CreateSubMenu(ToolStripMenuItem menu, List<Seperator> models)
+        private ContextMenuStrip CreateSubMenu(ToolStripMenuItem menu, List<BaseModel> models)
         {
             ContextMenuStrip contextMenu = new ContextMenuStrip();
 
@@ -28,12 +28,13 @@ namespace TrayTool
                 {
                     Directory dir = (Directory)model;
                     menuItem.Text = dir.Name;
-                    CreateSubMenu((ToolStripMenuItem)menuItem, new List<Seperator>(dir.Children));
+                    CreateSubMenu((ToolStripMenuItem)menuItem, new List<BaseModel>(dir.Children));
                 }
                 else if (model is Item)
                 {
                     Item item = (Item)model;
                     menuItem.Text = item.Name;
+                    menuItem.Click += new EventHandler(executeAction);
                 }
                 else if (model is Seperator) // Seperator has to be asked last, since Directories and Items are Seperators, too
                 {
@@ -42,7 +43,7 @@ namespace TrayTool
 
                 menuItem.Tag = model;
 
-                menuItem.Image = CreateImage(model.Image);
+                menuItem.Image = model.Image;
 
                 if (menu != null)
                     menu.DropDownItems.Add(menuItem);
@@ -53,33 +54,37 @@ namespace TrayTool
             return contextMenu;
         }
 
-        private Bitmap CreateImage(string uri)
+        private void executeAction(object sender, EventArgs e)
         {
-            Uri bitmapUri = new Uri(IsResource(uri), UriKind.RelativeOrAbsolute);
-
-            BitmapImage bitmapImage = new BitmapImage(bitmapUri);
-
-            System.IO.MemoryStream ms = new System.IO.MemoryStream();
-            PngBitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
-            encoder.Save(ms);
-
-            Bitmap bitmap = new Bitmap(ms);
-            return bitmap;
-        }
-
-        private string IsResource(string source)
-        {
-            if (source != null && source.StartsWith("/TrayTool;component/"))
+            if (sender is ToolStripMenuItem && (((ToolStripMenuItem) sender).Tag is Item))
             {
-                return "pack://application:,,," + source;
-            }
-            else
-            {
-                return source;
-            }
-        }
+                Item caller = (Item)((ToolStripMenuItem)sender).Tag;
 
-        
+                string path = caller.Path;
+                List<Argument> arguments = new List<Argument>(caller.Arguments);
+
+                string argument = "/C";
+                argument += " " + path + " ";
+
+                foreach (Argument arg in arguments)
+                {
+                    argument += arg.Key;
+                    if (arg.Concatenator != null && arg.Concatenator.Length > 0)
+                        argument += arg.Concatenator;
+                    else
+                        argument += " ";
+                    argument += arg.Value;
+                    argument += " ";
+                }
+
+                System.Diagnostics.Process process = new System.Diagnostics.Process();
+                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+                startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                startInfo.FileName = "cmd.exe";
+                startInfo.Arguments = argument;
+                process.StartInfo = startInfo;
+                process.Start();
+            }           
+        }
     }
 }

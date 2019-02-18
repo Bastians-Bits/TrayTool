@@ -134,7 +134,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converter\BoundaryConverter.cs" />
-    <Compile Include="ImageHandler.cs" />
+    <Compile Include="Converter\ImageConverter.cs" />
     <Compile Include="Converter\IndentConverter.cs" />
     <Compile Include="Converter\VisibilityConverter.cs" />
     <Page Include="View\MainView.xaml">
@@ -145,12 +145,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Helper.cs" />
     <Compile Include="MenuGenerator.cs" />
     <Compile Include="Model\AbstractItem.cs" />
     <Compile Include="Model\Argument.cs" />
     <Compile Include="Model\BaseModel.cs" />
     <Compile Include="Model\Directory.cs" />
     <Compile Include="Model\Item.cs" />
+    <Compile Include="Model\SerializeWrapper.cs" />
     <Compile Include="ViewModel\DelegateCommand.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="View\MainView.xaml.cs">
