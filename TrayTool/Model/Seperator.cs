@@ -13,13 +13,17 @@ namespace TrayTool.Model
         [XmlIgnore]
         private Directory _parent;
         [XmlIgnore]
+        private bool _isExpanded = false;
+        [XmlIgnore]
+        private bool _isSelected = false;
+        [XmlIgnore]
         public Bitmap Image { get => _image; set => SetProperty(ref _image, value); }
         [XmlIgnore]
         public Directory Parent { get => _parent; set => SetProperty(ref _parent, value); }
         [XmlIgnore]
-        public bool IsExpanded { get; set; } = false;
+        public bool IsExpanded { get => _isExpanded; set => SetProperty(ref _isExpanded, value); }
         [XmlIgnore]
-        public bool IsSelected { get; set; } = false;
+        public bool IsSelected { get => _isSelected; set => SetProperty(ref _isSelected, value); }
 
         public Seperator()
         {

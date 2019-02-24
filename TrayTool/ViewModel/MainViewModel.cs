@@ -239,6 +239,7 @@ namespace TrayTool.ViewModel
         private void MoveRight(BaseModel item, int index = 0)
         {
             Directory newParent = NearestDirectory(item);
+            newParent.IsExpanded = true;
 
             if (newParent != null)
             {

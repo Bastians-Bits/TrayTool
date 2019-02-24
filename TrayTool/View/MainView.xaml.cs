@@ -28,8 +28,10 @@ namespace TrayTool.View
 
         public MainWindow()
         {
-            viewModel = new MainViewModel();
-            viewModel.Items = new ObservableCollection<BaseModel>();
+            viewModel = new MainViewModel
+            {
+                Items = new ObservableCollection<BaseModel>()
+            };
             DataContext = viewModel;
 
             if (System.IO.File.Exists(xmlPath))
@@ -110,24 +112,24 @@ namespace TrayTool.View
                 parent = parent.Parent;
             }
 
-            System.Windows.Controls.ItemsControl container = treeView;
+            ItemsControl container = treeView;
             while ((_stack.Count > 0) && (container != null))
             {
                 BaseModel top = _stack.Pop();
-                container = (System.Windows.Controls.ItemsControl)container.ItemContainerGenerator.ContainerFromItem(top);
+                container = (ItemsControl)container.ItemContainerGenerator.ContainerFromItem(top);
             }
 
-            return container as System.Windows.Controls.TreeViewItem;
+            return container as TreeViewItem;
         }
 
-        private System.Windows.Controls.TreeViewItem GetNearestContainer(UIElement element)
+        private TreeViewItem GetNearestContainer(UIElement element)
         {
             // Walk up the element tree to the nearest tree view item. 
-            System.Windows.Controls.TreeViewItem container = element as System.Windows.Controls.TreeViewItem;
+            TreeViewItem container = element as TreeViewItem;
             while ((container == null) && (element != null))
             {
                 element = System.Windows.Media.VisualTreeHelper.GetParent(element) as UIElement;
-                container = element as System.Windows.Controls.TreeViewItem;
+                container = element as TreeViewItem;
             }
 
             return container;
@@ -159,7 +161,7 @@ namespace TrayTool.View
                     Seperator selectedItem = (Seperator)treeView.SelectedItem;
                     if (selectedItem != null)
                     {
-                        System.Windows.Controls.TreeViewItem container = GetContainerFromStuff(selectedItem);
+                        TreeViewItem container = GetContainerFromStuff(selectedItem);
                         if (container != null)
                         {
                             System.Windows.DragDropEffects finalDropEffect = DragDrop.DoDragDrop(container, selectedItem, System.Windows.DragDropEffects.Move);
@@ -299,59 +301,6 @@ namespace TrayTool.View
                 move.Moevement = Movement.Direction.DOWN;
             }
             viewModel.Move(move);
-
-            SetSelectItem(move.Item);
-        }
-
-        private bool SetSelectItem(BaseModel item)
-        {
-            // gets all nodes from the TreeView
-            // Not the best way, but there won't be at any point more than 30 nodes
-            Collection<TreeViewItem> allTreeContainers = GetAllItemContainers(treeView);
-            foreach (TreeViewItem treeViewItem in allTreeContainers)
-            {
-                if (treeViewItem.DataContext == item)
-                {
-                    // Make sure the new parent is expanded
-                    if (treeViewItem.DataContext is Seperator)
-                    {
-                        Seperator parentItem = (treeViewItem.DataContext as Seperator).Parent;
-                        foreach (TreeViewItem parentTreeViewItem in allTreeContainers)
-                        {
-                            if (parentTreeViewItem.DataContext == parentItem)
-                            {
-                                parentTreeViewItem.IsExpanded = true;
-                            }
-                        }
-                    }
-
-                    // Set the new moved item to selected
-                    treeViewItem.IsSelected = true;
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private Collection<TreeViewItem> GetAllItemContainers(ItemsControl itemsControl)
-        {
-            Collection<TreeViewItem> allItems = new Collection<TreeViewItem>();
-            for (int i = 0; i < itemsControl.Items.Count; i++)
-            {
-                // try to get the item Container   
-                TreeViewItem childItemContainer = itemsControl.ItemContainerGenerator.ContainerFromIndex(i) as TreeViewItem;
-                // the item container maybe null if it is still not generated from the runtime   
-                if (childItemContainer != null)
-                {
-                    allItems.Add(childItemContainer);
-                    Collection<TreeViewItem> childItems = GetAllItemContainers(childItemContainer);
-                    foreach (TreeViewItem childItem in childItems)
-                    {
-                        allItems.Add(childItem);
-                    }
-                }
-            }
-            return allItems;
         }
     }
 }
