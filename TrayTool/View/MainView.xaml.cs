@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using System.Xml.Serialization;
 using System.Text;
+using System.Windows.Controls;
 
 namespace TrayTool.View
 {
@@ -97,7 +98,7 @@ namespace TrayTool.View
             systemTray.Visible = false;
         }
 
-        private System.Windows.Controls.TreeViewItem GetContainerFromStuff(Seperator stuff)
+        private TreeViewItem GetContainerFromStuff(Seperator stuff)
         {
             Stack<Seperator> _stack = new Stack<Seperator>();
             _stack.Push(stuff);
@@ -272,7 +273,85 @@ namespace TrayTool.View
                     FixIncocistentItems(seperator);
                 }
             }
+        }
 
+        private void TreeView_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            Movement move = new Movement()
+            {
+                Item = (BaseModel)treeView.SelectedItem
+            };
+            if (e.Key == Key.A)
+            {
+                // Move Left
+                move.Moevement = Movement.Direction.LEFT;
+            } else if (e.Key == Key.D)
+            {
+                // Move Right
+                move.Moevement = Movement.Direction.RIGHT;
+            } else if (e.Key == Key.W)
+            {
+                // Move Up
+                move.Moevement = Movement.Direction.UP;
+            } else if (e.Key == Key.S)
+            {
+                // Move Down
+                move.Moevement = Movement.Direction.DOWN;
+            }
+            viewModel.Move(move);
+
+            SetSelectItem(move.Item);
+        }
+
+        private bool SetSelectItem(BaseModel item)
+        {
+            // gets all nodes from the TreeView
+            // Not the best way, but there won't be at any point more than 30 nodes
+            Collection<TreeViewItem> allTreeContainers = GetAllItemContainers(treeView);
+            foreach (TreeViewItem treeViewItem in allTreeContainers)
+            {
+                if (treeViewItem.DataContext == item)
+                {
+                    // Make sure the new parent is expanded
+                    if (treeViewItem.DataContext is Seperator)
+                    {
+                        Seperator parentItem = (treeViewItem.DataContext as Seperator).Parent;
+                        foreach (TreeViewItem parentTreeViewItem in allTreeContainers)
+                        {
+                            if (parentTreeViewItem.DataContext == parentItem)
+                            {
+                                parentTreeViewItem.IsExpanded = true;
+                            }
+                        }
+                    }
+
+                    // Set the new moved item to selected
+                    treeViewItem.IsSelected = true;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private Collection<TreeViewItem> GetAllItemContainers(ItemsControl itemsControl)
+        {
+            Collection<TreeViewItem> allItems = new Collection<TreeViewItem>();
+            for (int i = 0; i < itemsControl.Items.Count; i++)
+            {
+                // try to get the item Container   
+                TreeViewItem childItemContainer = itemsControl.ItemContainerGenerator.ContainerFromIndex(i) as TreeViewItem;
+                // the item container maybe null if it is still not generated from the runtime   
+                if (childItemContainer != null)
+                {
+                    allItems.Add(childItemContainer);
+                    Collection<TreeViewItem> childItems = GetAllItemContainers(childItemContainer);
+                    foreach (TreeViewItem childItem in childItems)
+                    {
+                        allItems.Add(childItem);
+                    }
+                }
+            }
+            return allItems;
         }
     }
 }

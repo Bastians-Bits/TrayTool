@@ -16,6 +16,10 @@ namespace TrayTool.Model
         public Bitmap Image { get => _image; set => SetProperty(ref _image, value); }
         [XmlIgnore]
         public Directory Parent { get => _parent; set => SetProperty(ref _parent, value); }
+        [XmlIgnore]
+        public bool IsExpanded { get; set; } = false;
+        [XmlIgnore]
+        public bool IsSelected { get; set; } = false;
 
         public Seperator()
         {

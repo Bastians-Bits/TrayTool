@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -20,10 +21,11 @@ namespace TrayTool.ViewModel
         public ICommand CbChooser { get; private set; }
 
         public ObservableCollection<BaseModel> Items { get => _items; set => SetProperty(ref _items, value); }
+        public ObservableCollection<ArguementTemplate> ArguementTemplates { get; set; }
 
         public Seperator TreeView_Selected { get; set; }
         public int CbAddChooser_Selected { get; set; }
-        
+
         public MainViewModel()
         {
             ButtonAdd = new DelegateCommand(ButtonAddClick);
@@ -135,6 +137,167 @@ namespace TrayTool.ViewModel
                 Item item = (Item)TreeView_Selected;
                 item.Path = openFileDialog.FileName;
             }
+        }
+
+        public void Move(Movement movement)
+        {
+            switch (movement.Moevement)
+            {
+                case Movement.Direction.UP:
+                    MoveUp(movement.Item);
+                    break;
+                case Movement.Direction.DOWN:
+                    MoveDown(movement.Item);
+                    break;
+                case Movement.Direction.LEFT:
+                    MoveLeft(movement.Item);
+                    break;
+                case Movement.Direction.RIGHT:
+                    MoveRight(movement.Item, movement.Index);
+                    break;
+            }
+        }
+
+        private void MoveUp(BaseModel item)
+        {
+            if (IsRoot(item))
+            {
+                int index = Items.IndexOf(item) - 1;
+                if (index >= 0)
+                {
+                    Items.Move(Items.IndexOf(item), Items.IndexOf(item) - 1);
+                }
+            }
+            else
+            {
+                if (item is Seperator)
+                {
+                    ObservableCollection<BaseModel> siblings = ((Seperator)item).Parent.Children;
+                    int index = siblings.IndexOf(item) - 1;
+                    if (index >= 0)
+                    {
+                        siblings.Move(siblings.IndexOf(item), siblings.IndexOf(item) - 1);
+                    }
+                }
+            }
+        }
+
+        private void MoveDown(BaseModel item)
+        {
+
+            if (IsRoot(item))
+            {
+                int index = Items.IndexOf(item) + 1;
+                if (index <= Items.Count - 1)
+                {
+                    Items.Move(Items.IndexOf(item), Items.IndexOf(item) + 1);
+                }
+            }
+            else
+            {
+                if (item is Seperator)
+                {
+                    ObservableCollection<BaseModel> siblings = ((Seperator)item).Parent.Children;
+                    int index = siblings.IndexOf(item) + 1;
+                    if (index <= siblings.Count - 1)
+                    {
+                        siblings.Move(siblings.IndexOf(item), siblings.IndexOf(item) + 1);
+                    }
+                }
+            }
+        }
+
+        private void MoveLeft(BaseModel item)
+        {
+            if (!IsRoot(item))
+            {
+                if (item is Seperator)
+                {
+                    Directory oldParent = ((Seperator)item).Parent;
+                    Directory newParent = oldParent.Parent;
+
+                    // Remove old assignment
+                    oldParent.Children.Remove(item);
+                    ((Seperator)item).Parent = null;
+
+                    if (newParent != null)
+                    {
+                        // Create new Assignment
+                        newParent.Children.Insert(newParent.Children.IndexOf(oldParent) + 1, item);
+                        ((Seperator)item).Parent = newParent;
+                    }
+                    else
+                    {
+                        // Means here, we have a new root node
+                        Items.Insert(Items.IndexOf(oldParent) + 1, item);
+                    }
+
+                }
+            }
+        }
+
+        private void MoveRight(BaseModel item, int index = 0)
+        {
+            Directory newParent = NearestDirectory(item);
+
+            if (newParent != null)
+            {
+                if (item is Seperator)
+                {
+                    if (IsRoot(item))
+                    {
+                        Items.Remove(item);
+                    }
+                    else
+                    {
+                        ((Seperator)item).Parent.Children.Remove(item);
+                    }
+                    ((Seperator)item).Parent = newParent;
+                }
+                newParent.Children.Insert(0, item);
+            }
+        }
+
+        public bool IsRoot(BaseModel item)
+        {
+            if (item is Seperator)
+            {
+                if (((Seperator)item).Parent == null)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public Directory NearestDirectory(BaseModel item)
+        {
+            int myIndex;
+            if (IsRoot(item))
+            {
+                // Get the next directory from the list
+                myIndex = Items.IndexOf(item);
+                for (; myIndex < Items.Count; myIndex++)
+                {
+                    if (Items[myIndex] is Directory)
+                    {
+                        return (Directory)Items[myIndex];
+                    }
+                }
+            }
+            else
+            {
+                // Get the next directory from the siblings
+                myIndex = ((Seperator)item).Parent.Children.IndexOf(item);
+                for (; myIndex < ((Seperator)item).Parent.Children.Count; myIndex++)
+                {
+                    if (((Seperator)item).Parent.Children[myIndex] is Directory)
+                    {
+                        return (Directory)((Seperator)item).Parent.Children[myIndex];
+                    }
+                }
+            }
+            return null;
         }
     }
 }

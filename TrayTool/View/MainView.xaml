@@ -26,12 +26,18 @@
                   MouseDown="TreeView_MouseDown" 
                   MouseMove="TreeView_MouseMove" 
                   Drop="TreeView_Drop" 
-                  SelectedItemChanged="TreeView_SelectedItemChanged">
+                  SelectedItemChanged="TreeView_SelectedItemChanged" KeyUp="TreeView_KeyUp">
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="TreeViewItem">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                </Style>
+            </TreeView.ItemContainerStyle>
             <TreeView.Resources>
                 <!-- Directory -->
                 <HierarchicalDataTemplate DataType="{x:Type Model:Directory}" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15"/>
+                        <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15" OpacityMask="White"/>
                         <TextBlock Text="   "/>
                         <TextBlock Text="{Binding Name}" />
                     </StackPanel>
@@ -40,7 +46,7 @@
                 <!-- Item -->
                 <DataTemplate DataType="{x:Type Model:Item}">
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15"/>
+                        <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15" OpacityMask="White"/>
                         <TextBlock Text="   "/>
                         <TextBlock Text="{Binding Name}" />
                     </StackPanel>
@@ -49,7 +55,7 @@
                 <!-- Seperator-->
                 <DataTemplate DataType="{x:Type Model:Seperator}">
                     <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15"/>
+                        <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15" OpacityMask="White"/>
                     </StackPanel>
                 </DataTemplate>
 

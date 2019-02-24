@@ -64,7 +64,7 @@ namespace TrayTool
                 List<Argument> arguments = new List<Argument>(caller.Arguments);
 
                 string argument = "/C";
-                argument += " " + path + " ";
+                argument += " \"" + path + "\" ";
 
                 foreach (Argument arg in arguments)
                 {
