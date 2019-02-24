@@ -223,13 +223,13 @@ namespace TrayTool.ViewModel
                     if (newParent != null)
                     {
                         // Create new Assignment
-                        newParent.Children.Insert(newParent.Children.IndexOf(oldParent) + 1, item);
+                        newParent.Children.Insert(newParent.Children.IndexOf(oldParent), item);
                         ((Seperator)item).Parent = newParent;
                     }
                     else
                     {
                         // Means here, we have a new root node
-                        Items.Insert(Items.IndexOf(oldParent) + 1, item);
+                        Items.Insert(Items.IndexOf(oldParent), item);
                     }
                 }
             }
