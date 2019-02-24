@@ -231,7 +231,6 @@ namespace TrayTool.ViewModel
                         // Means here, we have a new root node
                         Items.Insert(Items.IndexOf(oldParent) + 1, item);
                     }
-
                 }
             }
         }
