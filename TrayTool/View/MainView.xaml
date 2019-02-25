@@ -10,7 +10,6 @@
         Icon="/TrayTool;component/Resources/Menu.png">
     <Window.Resources>
         <local:BoundaryConverter x:Key="bondaryConverter" />
-        <local:IndentConverter x:Key="indentConverter" />
         <local:ImageConverter x:Key="imageConver" />
     </Window.Resources>
     <Grid ShowGridLines="False">

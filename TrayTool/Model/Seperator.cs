@@ -5,6 +5,10 @@ using System.Xml.Serialization;
 
 namespace TrayTool.Model
 {
+    /// <summary>
+    /// A simple seperator.
+    /// All further models should inherit from this class.
+    /// </summary>
     [Serializable]
     public class Seperator : BaseModel
     {

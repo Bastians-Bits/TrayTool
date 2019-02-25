@@ -9,6 +9,10 @@ namespace TrayTool.Model
     [XmlInclude(typeof(Item))]
     [XmlInclude(typeof(Seperator))]
     [System.Serializable()]
+    /// <summary>
+    /// Abstract class for models.
+    /// Contains just the PropertyChanged- Methods.
+    /// </summary>
     public abstract class BaseModel : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
