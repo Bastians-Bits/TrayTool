@@ -1,0 +1,23 @@
+﻿<UserControl x:Class="TrayTool.UIControlls.DCItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TrayTool.UIControlls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="666.224">
+    <Grid>
+        <Label Content="Name" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <Label Content="Path" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Stretch" Height="23" Margin="57,14,10,0" TextWrapping="Wrap" Text="{Binding Name}" VerticalAlignment="Top"/>
+        <TextBox HorizontalAlignment="Stretch" Height="23" Margin="57,45,10,0" TextWrapping="Wrap" Text="{Binding Path}" VerticalAlignment="Top"/>
+
+        <DataGrid ItemsSource="{Binding Arguments}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AutoGenerateColumns="False" CanUserReorderColumns="False" CanUserResizeRows="False" CanUserAddRows="True" CanUserDeleteRows="True" Margin="10,73,10,10">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Key" Binding="{Binding Key}" Width="150"/>
+                <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="150" />
+                <DataGridTextColumn Header="Concatenator" Binding="{Binding Concatenator}" Width="70"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

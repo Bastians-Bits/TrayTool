@@ -136,6 +136,14 @@
     <Compile Include="Converter\BoundaryConverter.cs" />
     <Compile Include="Converter\ImageConverter.cs" />
     <Compile Include="Converter\VisibilityConverter.cs" />
+    <Page Include="UIControlls\DCItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIControlls\UCDirectory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -154,6 +162,12 @@
     <Compile Include="Model\Item.cs" />
     <Compile Include="Model\Movement.cs" />
     <Compile Include="Model\SerializeWrapper.cs" />
+    <Compile Include="UIControlls\DCItem.xaml.cs">
+      <DependentUpon>DCItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIControlls\UCDirectory.xaml.cs">
+      <DependentUpon>UCDirectory.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\DelegateCommand.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="View\MainView.xaml.cs">
