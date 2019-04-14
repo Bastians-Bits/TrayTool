@@ -78,6 +78,12 @@ namespace TrayTool
                         argument += " ";
                     }
 
+                    if (path == null || (path != null && path.Length == 0))
+                    {
+                        logger.Warn("A called item has no path set. Canelling the call.");
+                        return;
+                    }
+
                     logger.Debug("Calling {0} with arguments \"{1}\"", path, argument);
 
                     System.Diagnostics.Process process = new System.Diagnostics.Process();
