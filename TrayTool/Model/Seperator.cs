@@ -60,5 +60,25 @@ namespace TrayTool.Model
                 return source;
             }
         }
+
+        /// <summary>
+        /// Checks whether a given item is an ancestor of the calling item is.
+        /// </summary>
+        /// <param name="item">The presumably ancestor</param>
+        /// <returns>bool</returns>
+        public bool IsAncestor(Seperator item)
+        {
+            Seperator parent = Parent;
+
+            while (parent != null )
+            {
+                if (parent == item)
+                {
+                    return true;
+                }
+                parent = parent.Parent;
+            }
+            return false;
+        }
     }
 }

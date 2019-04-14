@@ -2,13 +2,14 @@
 using System.Windows.Forms;
 using TrayTool.Model;
 using System;
-using System.Windows.Media.Imaging;
-using System.Drawing;
+using NLog;
 
 namespace TrayTool
 {
     class MenuGenerator
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         public ContextMenuStrip GeneratorMenu(List<BaseModel> models)
         {
             ContextMenuStrip menu = CreateSubMenu(null, models);
@@ -58,32 +59,36 @@ namespace TrayTool
         {
             if (sender is ToolStripMenuItem && (((ToolStripMenuItem) sender).Tag is Item))
             {
-                Item caller = (Item)((ToolStripMenuItem)sender).Tag;
-
-                string path = caller.Path;
-                List<Argument> arguments = new List<Argument>(caller.Arguments);
-
-                string argument = "/C";
-                argument += " \"" + path + "\" ";
-
-                foreach (Argument arg in arguments)
+                try
                 {
-                    argument += arg.Key;
-                    if (arg.Concatenator != null && arg.Concatenator.Length > 0)
-                        argument += arg.Concatenator;
-                    else
-                        argument += " ";
-                    argument += arg.Value;
-                    argument += " ";
-                }
+                    Item caller = (Item)((ToolStripMenuItem)sender).Tag;
 
-                System.Diagnostics.Process process = new System.Diagnostics.Process();
-                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-                startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-                startInfo.FileName = "cmd.exe";
-                startInfo.Arguments = argument;
-                process.StartInfo = startInfo;
-                process.Start();
+                    string path = caller.Path;
+                    List<Argument> arguments = new List<Argument>(caller.Arguments);
+
+                    string argument = "";
+                    foreach (Argument arg in arguments)
+                    {
+                        argument += arg.Key;
+                        if (arg.Concatenator != null && arg.Concatenator.Length > 0)
+                            argument += arg.Concatenator;
+                        else
+                            argument += " ";
+                        argument += arg.Value;
+                        argument += " ";
+                    }
+
+                    logger.Debug("Calling {0} with arguments \"{1}\"", path, argument);
+
+                    System.Diagnostics.Process process = new System.Diagnostics.Process();
+                    //process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+                    process.StartInfo.FileName = path;
+                    process.StartInfo.Arguments = argument;
+                    process.Start();
+                } catch(Exception ex)
+                {
+                    logger.Error(ex, "An error occured while callingthe shortcut");
+                }
             }           
         }
     }

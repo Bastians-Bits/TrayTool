@@ -23,7 +23,8 @@ namespace TrayTool.View
 
         MainViewModel viewModel;
 
-        private string xmlPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\TrayTool.xml";
+        private string xmlPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\TrayTool\\";
+        private string xmlName = "TrayTool.xml";
 
 
         public MainWindow()
@@ -34,9 +35,9 @@ namespace TrayTool.View
             };
             DataContext = viewModel;
 
-            if (System.IO.File.Exists(xmlPath))
+            if (System.IO.File.Exists(xmlPath + xmlName))
             {
-                SerializeWrapper xmlData = FromXML<SerializeWrapper>(xmlPath);
+                SerializeWrapper xmlData = FromXML<SerializeWrapper>(xmlPath + xmlName);
                 foreach (BaseModel baseModel in xmlData.elements)
                 {
                     FixIncocistentItems(baseModel);
@@ -51,8 +52,12 @@ namespace TrayTool.View
 
         public void OnWindowClosing(object sender, CancelEventArgs e)
         {
+            if (!System.IO.File.Exists(xmlPath + xmlName))
+            {
+                System.IO.Directory.CreateDirectory(xmlPath);
+            }
             string xmlData = ToXML(new SerializeWrapper(new List<BaseModel>(viewModel.Items)));
-            System.IO.File.WriteAllText(xmlPath, xmlData);
+            System.IO.File.WriteAllText(xmlPath + xmlName, xmlData);
 
             ContextMenuStrip menu = new ContextMenuStrip();
 
@@ -177,14 +182,15 @@ namespace TrayTool.View
             e.Handled = true;
 
             // Verify that this is a valid drop and then store the drop target 
-            System.Windows.Controls.TreeViewItem container = GetNearestContainer(e.OriginalSource as UIElement);
+            TreeViewItem container = GetNearestContainer(e.OriginalSource as UIElement);
             if (container != null)
             {
                 Seperator sourceStuff = (Seperator)e.Data.GetData(e.Data.GetFormats()[0]);
                 Seperator targetStuff = (Seperator)container.Header;
                 if ((sourceStuff != null) && (targetStuff != null))
                 {
-                    if (sourceStuff != targetStuff)
+                    // source can't be target and source can't be an ancestor of target
+                    if (sourceStuff != targetStuff && !targetStuff.IsAncestor(sourceStuff))
                     {
                         // Remove from the old 
                         if (sourceStuff.Parent != null)
@@ -265,10 +271,9 @@ namespace TrayTool.View
         private void FixIncocistentItems(BaseModel baseModel)
         {
             // Fix Parents
-            if (baseModel is Directory)
+            if (baseModel is Directory dir)
             {
-                Directory dir = (Directory) baseModel;
-                foreach(BaseModel child in dir.Children)
+                foreach (BaseModel child in dir.Children)
                 {
                     Seperator seperator = (Seperator)child;
                     seperator.Parent = dir;
@@ -283,24 +288,26 @@ namespace TrayTool.View
             {
                 Item = (BaseModel)treeView.SelectedItem
             };
-            if (e.Key == Key.A)
+
+            switch (e.Key)
             {
-                // Move Left
-                move.Moevement = Movement.Direction.LEFT;
-            } else if (e.Key == Key.D)
-            {
-                // Move Right
-                move.Moevement = Movement.Direction.RIGHT;
-            } else if (e.Key == Key.W)
-            {
-                // Move Up
-                move.Moevement = Movement.Direction.UP;
-            } else if (e.Key == Key.S)
-            {
-                // Move Down
-                move.Moevement = Movement.Direction.DOWN;
+                case Key.A:
+                    move.Moevement = Movement.Direction.LEFT;
+                    break;
+                case Key.D:
+                    move.Moevement = Movement.Direction.RIGHT;
+                    break;
+                case Key.W:
+                    move.Moevement = Movement.Direction.UP;
+                    break;
+                case Key.S:
+                    move.Moevement = Movement.Direction.DOWN;
+                    break;
+                default:
+                    move.Moevement = Movement.Direction.NONE;
+                    break;
             }
-            viewModel.Move(move);
+            viewModel.Move(move); 
         }
     }
 }

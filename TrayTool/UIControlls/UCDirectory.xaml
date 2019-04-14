@@ -5,9 +5,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TrayTool.UIControlls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="744.532">
+             d:DesignHeight="450" d:DesignWidth="666">
     <Grid>
         <Label Content="Directory" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Stretch" Height="23" Margin="74,14,10,0" TextWrapping="Wrap" Text="{Binding Name}" VerticalAlignment="Top"/>
+        <TextBox HorizontalContentAlignment="Stretch" Height="23" Margin="74,10,10,0" TextWrapping="Wrap" Text="{Binding Name}" VerticalAlignment="Top"/>
     </Grid>
 </UserControl>

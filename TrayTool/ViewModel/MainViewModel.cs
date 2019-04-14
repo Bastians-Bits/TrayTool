@@ -1,4 +1,4 @@
-﻿using System;
+﻿using NLog;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,6 +11,7 @@ namespace TrayTool.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
         public event PropertyChangedEventHandler PropertyChanged;
         private ObservableCollection<BaseModel> _items;
 
@@ -46,11 +47,13 @@ namespace TrayTool.ViewModel
 
         private void ButtonAddClick(object commandParamter)
         {
+            logger.Trace("ButtonAddClick called");
             if (TreeView_Selected != null)
             {
                 if (TreeView_Selected is Directory)
                 {
                     ((Directory)TreeView_Selected).Children.Add(CreateNewInstance(CbAddChooser_Selected, (Directory)TreeView_Selected));
+                    logger.Debug("Added instance {instance} to the directory {directory}", CbAddChooser_Selected, ((Directory)TreeView_Selected).Name);
                 }
                 else
                 {
@@ -61,6 +64,7 @@ namespace TrayTool.ViewModel
 
                         // Add it to the parent                   
                         TreeView_Selected.Parent.Children.Insert(index, CreateNewInstance(CbAddChooser_Selected, TreeView_Selected.Parent));
+                        logger.Debug("Added instance {instance} to the directory {directory}", CbAddChooser_Selected, ((Directory)TreeView_Selected).Parent.Name);
                     }
                     else
                     {
@@ -68,6 +72,7 @@ namespace TrayTool.ViewModel
 
                         // No parent, the currently selected is a root element
                         Items.Insert(index + 1, CreateNewInstance(CbAddChooser_Selected, null));
+                        logger.Debug("Added instance {instance} to the directory {directory}", CbAddChooser_Selected, "ROOT");
                     }
                 }
             }
@@ -75,16 +80,20 @@ namespace TrayTool.ViewModel
             {
                 // No parent dir, we have to create a new root element
                 Items.Add(CreateNewInstance(CbAddChooser_Selected, null));
+                logger.Debug("Added instance {instance} to the directory {directory}", CbAddChooser_Selected, "ROOT");
             }
+            logger.Trace("ButtonAddClick left");
         }
 
         private void ButtonRemoveClick(object commandParamter)
         {
+            logger.Trace("ButtonRemoveClick called");
             if (TreeView_Selected != null)
             {
                 //TODO Check for children and warn
                 if (TreeView_Selected.Parent != null)
                 {
+                    logger.Debug("Delete item {0}", TreeView_Selected);
                     TreeView_Selected.Parent.Children.Remove(TreeView_Selected);
                 }
                 else
@@ -95,12 +104,14 @@ namespace TrayTool.ViewModel
                         // We won't use CompareTo, since the values are not relevant (duplicates are allowes), but the instance won't lie
                         if (Items[i] == TreeView_Selected)
                         {
+                            logger.Debug("Delete item {0}", Items[i].ToString());
                             Items.RemoveAt(i);
                             break;
                         }
                     }
                 }
             }
+            logger.Trace("ButtonRemoveClick left");
         }
 
         public Seperator CreateNewInstance(int target, Directory parent)
@@ -238,10 +249,10 @@ namespace TrayTool.ViewModel
         private void MoveRight(BaseModel item, int index = 0)
         {
             Directory newParent = NearestDirectory(item);
-            newParent.IsExpanded = true;
-
+            
             if (newParent != null)
             {
+                newParent.IsExpanded = true;
                 if (item is Seperator)
                 {
                     if (IsRoot(item))
@@ -277,6 +288,7 @@ namespace TrayTool.ViewModel
             {
                 // Get the next directory from the list
                 myIndex = Items.IndexOf(item);
+                if (item is Directory) myIndex++; 
                 for (; myIndex < Items.Count; myIndex++)
                 {
                     if (Items[myIndex] is Directory)
@@ -289,6 +301,7 @@ namespace TrayTool.ViewModel
             {
                 // Get the next directory from the siblings
                 myIndex = ((Seperator)item).Parent.Children.IndexOf(item);
+                if (item is Directory) myIndex++;
                 for (; myIndex < ((Seperator)item).Parent.Children.Count; myIndex++)
                 {
                     if (((Seperator)item).Parent.Children[myIndex] is Directory)
