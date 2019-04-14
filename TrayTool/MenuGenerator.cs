@@ -80,7 +80,7 @@ namespace TrayTool
 
                     if (path == null || (path != null && path.Length == 0))
                     {
-                        logger.Warn("A called item has no path set. Canelling the call.");
+                        logger.Warn("A called item has no path set. Cancelling the call.");
                         return;
                     }
 
