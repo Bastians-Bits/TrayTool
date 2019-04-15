@@ -24,7 +24,16 @@ namespace TrayTool.ViewModel
         public ObservableCollection<BaseModel> Items { get => _items; set => SetProperty(ref _items, value); }
         public ObservableCollection<ArguementTemplate> ArguementTemplates { get; set; }
 
-        public Seperator TreeView_Selected { get; set; }
+
+        private Seperator _treeView_Selected;
+        public Seperator TreeView_Selected { get
+            {
+                return _treeView_Selected;
+            }
+            set {
+                SetProperty(ref _treeView_Selected, value);
+            }
+        }
         public int CbAddChooser_Selected { get; set; }
 
         public MainViewModel()
@@ -64,7 +73,7 @@ namespace TrayTool.ViewModel
 
                         // Add it to the parent                   
                         TreeView_Selected.Parent.Children.Insert(index, CreateNewInstance(CbAddChooser_Selected, TreeView_Selected.Parent));
-                        logger.Debug("Added instance {instance} to the directory {directory}", CbAddChooser_Selected, ((Directory)TreeView_Selected).Parent.Name);
+                        logger.Debug("Added instance {instance} to the directory {directory}", CbAddChooser_Selected, ((Item)TreeView_Selected).Parent.Name);
                     }
                     else
                     {

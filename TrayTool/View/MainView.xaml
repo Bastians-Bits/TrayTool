@@ -19,55 +19,12 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TreeView Grid.Column="0" x:Name="treeView" 
-                  ItemsSource="{Binding Items}" Margin="10,10,10,10" AllowDrop="True"
-                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                  MouseDown="TreeView_MouseDown" 
-                  MouseMove="TreeView_MouseMove" 
-                  Drop="TreeView_Drop" 
-                  SelectedItemChanged="TreeView_SelectedItemChanged" 
-                  KeyUp="TreeView_KeyUp" 
-                  Background="#FFFCFCFC" 
-                  Foreground="#FF868686">
-            <TreeView.ItemContainerStyle>
-                <Style TargetType="TreeViewItem">
-                    <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}" />
-                    <Setter Property="IsExpanded" Value="{Binding Path=IsExpanded, Mode=TwoWay}" />
-                </Style>
-            </TreeView.ItemContainerStyle>
-            <TreeView.Resources>
-                <!-- Directory -->
-                <HierarchicalDataTemplate DataType="{x:Type Model:Directory}" ItemsSource="{Binding Children}">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15" OpacityMask="White"/>
-                        <TextBlock Text="   "/>
-                        <TextBlock Text="{Binding Name}" />
-                    </StackPanel>
-                </HierarchicalDataTemplate>
-
-                <!-- Item -->
-                <DataTemplate DataType="{x:Type Model:Item}">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15" OpacityMask="White"/>
-                        <TextBlock Text="   "/>
-                        <TextBlock Text="{Binding Name}" />
-                    </StackPanel>
-                </DataTemplate>
-
-                <!-- Seperator-->
-                <DataTemplate DataType="{x:Type Model:Seperator}">
-                    <StackPanel Orientation="Horizontal">
-                        <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15" OpacityMask="White"/>
-                    </StackPanel>
-                </DataTemplate>
-
-            </TreeView.Resources>
-        </TreeView>
+        <UIControlls:ExtendetTreeView Grid.Column="0" x:Name="treeViewContainer"/>
 
         <GridSplitter Grid.Column="1" Background="#FFA6A6A6" Width="5" HorizontalAlignment="Left" VerticalAlignment="Stretch"/>
 
         <WrapPanel Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Top">
-            <ContentPresenter Content="{Binding ElementName=treeView, Path=SelectedItem}" VerticalAlignment="Top">
+            <ContentPresenter Content="{Binding TreeView_Selected}" VerticalAlignment="Top">
                 <ContentPresenter.Resources>
                     <!-- Grid Item -->
                     <DataTemplate DataType="{x:Type Model:Item}">

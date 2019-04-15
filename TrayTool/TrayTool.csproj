@@ -147,6 +147,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UIControlls\ExtendetTreeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UIControlls\UCDirectory.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -171,6 +175,9 @@
     <Compile Include="Model\SerializeWrapper.cs" />
     <Compile Include="UIControlls\DCItem.xaml.cs">
       <DependentUpon>DCItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIControlls\ExtendetTreeView.xaml.cs">
+      <DependentUpon>ExtendetTreeView.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIControlls\UCDirectory.xaml.cs">
       <DependentUpon>UCDirectory.xaml</DependentUpon>
