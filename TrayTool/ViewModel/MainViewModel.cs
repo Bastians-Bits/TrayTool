@@ -26,7 +26,8 @@ namespace TrayTool.ViewModel
 
 
         private Seperator _treeView_Selected;
-        public Seperator TreeView_Selected { get
+        public Seperator TreeView_Selected {
+            get
             {
                 return _treeView_Selected;
             }

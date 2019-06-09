@@ -29,7 +29,7 @@ namespace TrayTool.Model
         [XmlIgnore]
         public bool IsSelected { get => _isSelected; set => SetProperty(ref _isSelected, value); }
 
-        public Seperator()
+        public Seperator() 
         {
             Image = CreateImage("/TrayTool;component/Resources/Seperator.png");
         }
