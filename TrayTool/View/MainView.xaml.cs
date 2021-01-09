@@ -38,11 +38,11 @@ namespace TrayTool.View
             if (System.IO.File.Exists(xmlPath + xmlName))
             {
                 SerializeWrapper xmlData = FromXML<SerializeWrapper>(xmlPath + xmlName);
-                foreach (BaseModel baseModel in xmlData.elements)
+                foreach (BaseModel baseModel in xmlData.Elements)
                 {
                     FixIncocistentItems(baseModel);
                 }
-                ViewModel.Items = new ObservableCollection<BaseModel>(xmlData.elements);
+                ViewModel.Items = new ObservableCollection<BaseModel>(xmlData.Elements);
             }
 
             InitializeComponent();
@@ -123,6 +123,27 @@ namespace TrayTool.View
                 return stringWriter.ToString();
             }
         }
+
+        public XmlAttributeOverrides CreateXmlOverrides()
+        {
+            XmlAttributeOverrides overrides = new XmlAttributeOverrides();
+
+            overrides.Add(typeof(Item), new XmlAttributes
+            {
+                XmlType = new XmlTypeAttribute("Item")
+            });
+            overrides.Add(typeof(Directory), new XmlAttributes
+            {
+                XmlType = new XmlTypeAttribute("Directory")
+            });
+            overrides.Add(typeof(Seperator), new XmlAttributes
+            {
+                XmlType = new XmlTypeAttribute("Seperator")
+            });
+            return overrides;
+        }
+
+
 
         private void FixIncocistentItems(BaseModel baseModel)
         {

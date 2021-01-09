@@ -3,17 +3,20 @@ using System.Xml.Serialization;
 
 namespace TrayTool.Model
 {
-    [XmlRoot("BaseModels")]
+    [XmlRoot("root")]
     public class SerializeWrapper
     {
-        [XmlElement("BaseModel")]
-        public List<BaseModel> elements { get; set; }
+        [XmlArray("elements")]
+        [XmlArrayItem(typeof(Directory), ElementName = "Directory")]
+        [XmlArrayItem(typeof(Item), ElementName = "Item")]
+        [XmlArrayItem(typeof(Seperator), ElementName = "Seperator")]
+        public List<BaseModel> Elements { get; set; }
 
         public SerializeWrapper() { }
 
         public SerializeWrapper(List<BaseModel> elements)
         {
-            this.elements = elements;
+            Elements = elements;
         }
     }
 }
