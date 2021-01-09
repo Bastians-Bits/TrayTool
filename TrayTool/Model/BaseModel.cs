@@ -5,6 +5,7 @@ using System.Xml.Serialization;
 
 namespace TrayTool.Model
 {
+    // See also SerializeWraqpper and Directory
     [XmlInclude(typeof(Directory))]
     [XmlInclude(typeof(Item))]
     [XmlInclude(typeof(Seperator))]

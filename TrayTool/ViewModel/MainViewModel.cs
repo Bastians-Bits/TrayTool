@@ -74,7 +74,7 @@ namespace TrayTool.ViewModel
 
                         // Add it to the parent                   
                         TreeView_Selected.Parent.Children.Insert(index, CreateNewInstance(CbAddChooser_Selected, TreeView_Selected.Parent));
-                        logger.Debug("Added instance {instance} to the directory {directory}", CbAddChooser_Selected, ((Item)TreeView_Selected).Parent.Name);
+                        logger.Debug("Added instance {instance} to the directory {directory}", CbAddChooser_Selected, TreeView_Selected.Parent.Name);
                     }
                     else
                     {
