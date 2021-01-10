@@ -157,6 +157,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UIControlls\UCSeperator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -165,7 +169,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Helper.cs" />
     <Compile Include="MenuGenerator.cs" />
     <Compile Include="Model\AbstractItem.cs" />
     <Compile Include="Model\ArguementTemplate.cs" />
@@ -183,6 +186,9 @@
     </Compile>
     <Compile Include="UIControlls\UCDirectory.xaml.cs">
       <DependentUpon>UCDirectory.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIControlls\UCSeperator.xaml.cs">
+      <DependentUpon>UCSeperator.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\DelegateCommand.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />

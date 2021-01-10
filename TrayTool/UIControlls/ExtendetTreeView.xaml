@@ -32,6 +32,7 @@
         <TreeView.Resources>
             <!-- Directory -->
             <HierarchicalDataTemplate DataType="{x:Type Model:Directory}" ItemsSource="{Binding Children}">
+                
                 <StackPanel Orientation="Horizontal">
                     <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15" OpacityMask="White"/>
                     <TextBlock Text="   "/>

@@ -6,10 +6,18 @@ using NLog;
 
 namespace TrayTool
 {
+    /// <summary>
+    /// This class creates the context menu for the system tray
+    /// </summary>
     class MenuGenerator
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
+        /// <summary>
+        /// Generate a context menu with a given list of items
+        /// </summary>
+        /// <param name="models">The list of items</param>
+        /// <returns>A context menu</returns>
         public ContextMenuStrip GeneratorMenu(List<BaseModel> models)
         {
             ContextMenuStrip menu = CreateSubMenu(null, models);
@@ -17,6 +25,12 @@ namespace TrayTool
             return menu;
         }
 
+        /// <summary>
+        /// Create a sub context menu for the items. Will be called recursively to create the folder structure
+        /// </summary>
+        /// <param name="menu">The current state of the menu. Will be used as reference</param>
+        /// <param name="models">The list of models to append</param>
+        /// <returns>A sub context for the context menu</returns>
         private ContextMenuStrip CreateSubMenu(ToolStripMenuItem menu, List<BaseModel> models)
         {
             ContextMenuStrip contextMenu = new ContextMenuStrip();
@@ -55,14 +69,17 @@ namespace TrayTool
             return contextMenu;
         }
 
+        /// <summary>
+        /// Handler, if a item in the system tray is clicked
+        /// </summary>
+        /// <param name="sender">The sender</param>
+        /// <param name="e">The event arguments</param>
         private void executeAction(object sender, EventArgs e)
         {
-            if (sender is ToolStripMenuItem && (((ToolStripMenuItem) sender).Tag is Item))
+            if (sender is ToolStripMenuItem item && (item.Tag is Item caller))
             {
                 try
                 {
-                    Item caller = (Item)((ToolStripMenuItem)sender).Tag;
-
                     string path = caller.Path;
                     List<Argument> arguments = new List<Argument>(caller.Arguments);
 
