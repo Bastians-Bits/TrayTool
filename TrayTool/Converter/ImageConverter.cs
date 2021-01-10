@@ -7,6 +7,9 @@ using System.Windows.Media.Imaging;
 
 namespace TrayTool
 {
+    /// <summary>
+    /// Convert a given image from Bitmap to BitmapImage to use it as WPF component.
+    /// </summary>
     class ImageConverter : IValueConverter
     {
     
@@ -21,6 +24,11 @@ namespace TrayTool
             return null;
         }
 
+        /// <summary>
+        /// Convert the Bitmap-Image to a BitmapImage- Object by reading it into the memory.
+        /// </summary>
+        /// <param name="bitmap">The Bitmap-Object</param>
+        /// <returns>A bitmapImage-Object</returns>
         BitmapImage BitmapToImageSource(Bitmap bitmap)
         {
             using (MemoryStream memory = new MemoryStream())

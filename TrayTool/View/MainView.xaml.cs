@@ -14,17 +14,19 @@ using System.Windows.Controls;
 namespace TrayTool.View
 {
     /// <summary>
-    /// Interaktionslogik für MainWindow.xaml
+    /// Main class for the view. Also handles the loading and storing of the xml
     /// </summary>
     public partial class MainWindow : Window
     {
         
-        private NotifyIcon systemTray = new NotifyIcon();
-
+        private readonly NotifyIcon systemTray = new NotifyIcon();
+        /// <summary>
+        /// The view model behind the view
+        /// </summary>
         public MainViewModel ViewModel { get; set; }
 
-        private string xmlPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\TrayTool\\";
-        private string xmlName = "TrayTool.xml";
+        private readonly string xmlPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\TrayTool\\";
+        private readonly string xmlName = "TrayTool.xml";
 
 
         public MainWindow()
@@ -142,8 +144,6 @@ namespace TrayTool.View
             });
             return overrides;
         }
-
-
 
         private void FixIncocistentItems(BaseModel baseModel)
         {

@@ -9,23 +9,38 @@ using TrayTool.Model;
 
 namespace TrayTool.ViewModel
 {
+    /// <summary>
+    /// The main view model, used in the main view
+    /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public event PropertyChangedEventHandler PropertyChanged;
         private ObservableCollection<BaseModel> _items;
-
-        public ICommand ButtonAdd { get; private set; }
-        public ICommand ButtonRemove { get; private set; }
-        public ICommand ButtonBrowserPath { get; private set; }
-        public ICommand TreeView { get; private set; }
-        public ICommand CbChooser { get; private set; }
-
-        public ObservableCollection<BaseModel> Items { get => _items; set => SetProperty(ref _items, value); }
-        public ObservableCollection<ArguementTemplate> ArguementTemplates { get; set; }
-
-
         private Seperator _treeView_Selected;
+
+        /// <summary>
+        /// Delegater for the Add Button
+        /// </summary>
+        public ICommand ButtonAdd { get; private set; }
+        /// <summary>
+        /// Delegator for the Remove Button
+        /// </summary>
+        public ICommand ButtonRemove { get; private set; }
+        /// <summary>
+        /// Delegator for the Browse Button in the Item-UserControl
+        /// </summary>
+        public ICommand ButtonBrowserPath { get; private set; }
+
+        /// <summary>
+        /// A list of all items in the application
+        /// </summary>
+        public ObservableCollection<BaseModel> Items { get => _items; set => SetProperty(ref _items, value); }
+        // A list of all argument templates in the application
+        public ObservableCollection<ArguementTemplate> ArguementTemplates { get; set; }
+        /// <summary>
+        /// The currently selected treeview item
+        /// </summary>
         public Seperator TreeView_Selected {
             get
             {
@@ -35,6 +50,9 @@ namespace TrayTool.ViewModel
                 SetProperty(ref _treeView_Selected, value);
             }
         }
+        /// <summary>
+        /// The currently selected element in the item chooser (Item, Directory, Seperator)
+        /// </summary>
         public int CbAddChooser_Selected { get; set; }
 
         public MainViewModel()
@@ -44,6 +62,14 @@ namespace TrayTool.ViewModel
             ButtonBrowserPath = new DelegateCommand(ButtonBrowserPathClick);
         }
 
+        /// <summary>
+        /// Each time a property is changed and the view has to be notified, this method has to be called
+        /// </summary>
+        /// <typeparam name="T">The type of the set value</typeparam>
+        /// <param name="field">A reference to the field</param>
+        /// <param name="newValue">The new value of the field</param>
+        /// <param name="propertyName">The name of the changed property. Filled by the runtime</param>
+        /// <returns></returns>
         protected bool SetProperty<T>(ref T field, T newValue, [CallerMemberName]string propertyName = null)
         {
             if (!EqualityComparer<T>.Default.Equals(field, newValue))
@@ -55,15 +81,19 @@ namespace TrayTool.ViewModel
             return false;
         }
 
+        /// <summary>
+        /// Handle the Button Add Event. This adds a new instance (Item, Seperator, Directory) to the tree view
+        /// </summary>
+        /// <param name="commandParamter">The parameter of the button click</param>
         private void ButtonAddClick(object commandParamter)
         {
             logger.Trace("ButtonAddClick called");
             if (TreeView_Selected != null)
             {
-                if (TreeView_Selected is Directory)
+                if (TreeView_Selected is Directory directory)
                 {
-                    ((Directory)TreeView_Selected).Children.Add(CreateNewInstance(CbAddChooser_Selected, (Directory)TreeView_Selected));
-                    logger.Debug("Added instance {instance} to the directory {directory}", CbAddChooser_Selected, ((Directory)TreeView_Selected).Name);
+                    directory.Children.Add(CreateNewInstance(CbAddChooser_Selected, directory));
+                    logger.Debug("Added instance {instance} to the directory {directory}", CbAddChooser_Selected, directory.Name);
                 }
                 else
                 {
@@ -95,6 +125,10 @@ namespace TrayTool.ViewModel
             logger.Trace("ButtonAddClick left");
         }
 
+        /// <summary>
+        /// Handle the Buttone Remove Event. This removes the currently selected instance from the tree view
+        /// </summary>
+        /// <param name="commandParamter">The parameter of the button click</param>
         private void ButtonRemoveClick(object commandParamter)
         {
             logger.Trace("ButtonRemoveClick called");
@@ -124,6 +158,27 @@ namespace TrayTool.ViewModel
             logger.Trace("ButtonRemoveClick left");
         }
 
+        /// <summary>
+        /// Handle the Button Browse Path Event. This calls the OpenFile-Dialog and sets the chosen path into the selected tree view item
+        /// </summary>
+        /// <param name="commandParamter">The parameter of the button click</param>
+        private void ButtonBrowserPathClick(object commandParamter)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                Item item = (Item)TreeView_Selected;
+                item.Path = openFileDialog.FileName;
+            }
+        }
+
+        /// <summary>
+        /// Create a new Instance of an item, directory, seperator
+        /// </summary>
+        /// <param name="target">the target type; 0 = Item, 1 = Directory, 2 = Seperator</param>
+        /// <param name="parent"></param>
+        /// <returns></returns>
         public Seperator CreateNewInstance(int target, Directory parent)
         {
             switch (target)
@@ -149,17 +204,10 @@ namespace TrayTool.ViewModel
             return null;
         }
 
-        private void ButtonBrowserPathClick(object commandParamter)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                Item item = (Item)TreeView_Selected;
-                item.Path = openFileDialog.FileName;
-            }
-        }
-
+        /// <summary>
+        /// Main Method to handle movement
+        /// </summary>
+        /// <param name="movement">the movement to handle</param>
         public void Move(Movement movement)
         {
             switch (movement.Moevement)
@@ -179,6 +227,10 @@ namespace TrayTool.ViewModel
             }
         }
 
+        /// <summary>
+        /// Move the given item a postion up
+        /// </summary>
+        /// <param name="item">The item to move</param>
         private void MoveUp(BaseModel item)
         {
             if (IsRoot(item))
@@ -191,9 +243,10 @@ namespace TrayTool.ViewModel
             }
             else
             {
-                if (item is Seperator)
+                // In the current hierarchy, this makes no sense, BaseModel is always a Seperator, but this way we are future-proof
+                if (item is Seperator seperator)
                 {
-                    ObservableCollection<BaseModel> siblings = ((Seperator)item).Parent.Children;
+                    ObservableCollection<BaseModel> siblings = seperator.Parent.Children;
                     int index = siblings.IndexOf(item) - 1;
                     if (index >= 0)
                     {
@@ -203,9 +256,12 @@ namespace TrayTool.ViewModel
             }
         }
 
+        /// <summary>
+        /// Move the given item a position to the right
+        /// </summary>
+        /// <param name="item">The item to move</param>
         private void MoveDown(BaseModel item)
         {
-
             if (IsRoot(item))
             {
                 int index = Items.IndexOf(item) + 1;
@@ -216,9 +272,10 @@ namespace TrayTool.ViewModel
             }
             else
             {
-                if (item is Seperator)
+                // In the current hierarchy, this makes no sense, BaseModel is always a Seperator, but this way we are future-proof
+                if (item is Seperator seperator)
                 {
-                    ObservableCollection<BaseModel> siblings = ((Seperator)item).Parent.Children;
+                    ObservableCollection<BaseModel> siblings = seperator.Parent.Children;
                     int index = siblings.IndexOf(item) + 1;
                     if (index <= siblings.Count - 1)
                     {
@@ -228,24 +285,29 @@ namespace TrayTool.ViewModel
             }
         }
 
+        /// <summary>
+        /// Move the given item a position to the left
+        /// </summary>
+        /// <param name="item">The item to move</param>
         private void MoveLeft(BaseModel item)
         {
             if (!IsRoot(item))
             {
-                if (item is Seperator)
+                // In the current hierarchy, this makes no sense, BaseModel is always a Seperator, but this way we are future-proof
+                if (item is Seperator seperator)
                 {
-                    Directory oldParent = ((Seperator)item).Parent;
+                    Directory oldParent = seperator.Parent;
                     Directory newParent = oldParent.Parent;
 
                     // Remove old assignment
                     oldParent.Children.Remove(item);
-                    ((Seperator)item).Parent = null;
+                    seperator.Parent = null;
 
                     if (newParent != null)
                     {
                         // Create new Assignment
                         newParent.Children.Insert(newParent.Children.IndexOf(oldParent), item);
-                        ((Seperator)item).Parent = newParent;
+                        seperator.Parent = newParent;
                     }
                     else
                     {
@@ -256,14 +318,21 @@ namespace TrayTool.ViewModel
             }
         }
 
-        private void MoveRight(BaseModel item, int index = 0)
+        /// <summary>
+        /// Move the given item a position to the right
+        /// </summary>
+        /// <param name="item">The item to move</param>
+        /// <param name="index">The index of the new parent (WIP)</param>
+        private void MoveRight(BaseModel item, int? index = null)
         {
             Directory newParent = NearestDirectory(item);
             
             if (newParent != null)
             {
+                // Open the new parent directory for better visibility
                 newParent.IsExpanded = true;
-                if (item is Seperator)
+                // In the current hierarchy, this makes no sense, BaseModel is always a Seperator, but this way we are future-proof
+                if (item is Seperator seperator)
                 {
                     if (IsRoot(item))
                     {
@@ -271,19 +340,24 @@ namespace TrayTool.ViewModel
                     }
                     else
                     {
-                        ((Seperator)item).Parent.Children.Remove(item);
+                        seperator.Parent.Children.Remove(item);
                     }
-                    ((Seperator)item).Parent = newParent;
+                    seperator.Parent = newParent;
                 }
                 newParent.Children.Insert(0, item);
             }
         }
 
+        /// <summary>
+        /// Check if a given item is a root element. A root element is defined by not having a parent
+        /// </summary>
+        /// <param name="item">The item to check</param>
+        /// <returns>True, if is a root element, otherwise false</returns>
         public bool IsRoot(BaseModel item)
         {
-            if (item is Seperator)
+            if (item is Seperator seperator)
             {
-                if (((Seperator)item).Parent == null)
+                if (seperator.Parent == null)
                 {
                     return true;
                 }
@@ -291,6 +365,11 @@ namespace TrayTool.ViewModel
             return false;
         }
 
+        /// <summary>
+        /// Get the nearest directory to a given item
+        /// </summary>
+        /// <param name="item">The item to search by</param>
+        /// <returns>The directory, null if none has been found</returns>
         public Directory NearestDirectory(BaseModel item)
         {
             int myIndex;
@@ -301,9 +380,9 @@ namespace TrayTool.ViewModel
                 if (item is Directory) myIndex++; 
                 for (; myIndex < Items.Count; myIndex++)
                 {
-                    if (Items[myIndex] is Directory)
+                    if (Items[myIndex] is Directory directory)
                     {
-                        return (Directory)Items[myIndex];
+                        return directory;
                     }
                 }
             }
@@ -314,9 +393,9 @@ namespace TrayTool.ViewModel
                 if (item is Directory) myIndex++;
                 for (; myIndex < ((Seperator)item).Parent.Children.Count; myIndex++)
                 {
-                    if (((Seperator)item).Parent.Children[myIndex] is Directory)
+                    if (((Seperator)item).Parent.Children[myIndex] is Directory directory)
                     {
-                        return (Directory)((Seperator)item).Parent.Children[myIndex];
+                        return directory;
                     }
                 }
             }

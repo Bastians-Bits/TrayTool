@@ -35,6 +35,11 @@
                     <DataTemplate DataType="{x:Type Model:Directory}">
                         <UIControlls:UCDirectory />
                     </DataTemplate>
+                    
+                    <!-- Grid Seperator -->
+                    <DataTemplate DataType="{x:Type Model:Seperator}">
+                        <UIControlls:UCSeperator />
+                    </DataTemplate>
                 </ContentPresenter.Resources>
             </ContentPresenter>
         </WrapPanel>
