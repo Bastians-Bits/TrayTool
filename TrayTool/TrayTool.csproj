@@ -28,13 +28,6 @@
     <StartupObject>TrayTool.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="Windows.Data" />
-    <Reference Include="Windows.UI" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\Folder.png" />
   </ItemGroup>
   <ItemGroup>
