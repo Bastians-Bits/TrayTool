@@ -26,7 +26,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>TrayTool.App</StartupObject>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>TrayTool.pfx</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
   </PropertyGroup>
