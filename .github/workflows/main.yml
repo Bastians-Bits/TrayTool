@@ -29,7 +29,7 @@ jobs:
       App_Packages_Directory: AppPackages
       SigningCertificate: TrayTool.pfx
       Solution_Path: TrayTool.sln
-      Publish_Path: TrayTool/bin/x64/Release/net5.0-windows/win-x64
+      Publish_Path: .
       #Test_Project_Path: MyWpfApp.Tests\MyWpfApp.Tests.csproj
       Actions_Allow_Unsecure_Commands: true # Allows AddPAth and SetEnv commands
 
