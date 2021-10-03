@@ -3,7 +3,7 @@
 
 # This continuous integration pipeline is triggered anytime a user pushes code to the repo.
 # This pipeline builds the Wpf project, runs unit tests, then saves the MSIX build artifact.
-name:  Wpf Continuous Integration
+name:  Create Executable
 
 # Trigger on every master branch push and pull request
 on:
@@ -29,10 +29,8 @@ jobs:
       App_Packages_Directory: AppPackages
       SigningCertificate: TrayTool.pfx
       Solution_Path: TrayTool.sln
+      Publish_Path: TrayTool/bin/x64/Release/net5.0-windows/win-x64
       #Test_Project_Path: MyWpfApp.Tests\MyWpfApp.Tests.csproj
-      Wpf_Project_Path: TrayTool\TrayTool.csproj
-      Wap_Project_Directory: TrayTool.Package
-      Wap_Project_Name: TrayTool.Package.wapproj
       Actions_Allow_Unsecure_Commands: true # Allows AddPAth and SetEnv commands
 
     steps:
@@ -84,7 +82,7 @@ jobs:
     #    [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
 
     # Build the Windows Application Packaging project
-    - name: Build the Windows Application Packaging Project (wapproj)
+    - name: Build the Windows Application Project
       run: msbuild $env:Solution_Path /p:Platform=$env:TargetPlatform /p:Configuration=$env:Configuration #/p:PackageCertificateKeyFile=$env:SigningCertificate /p:PackageCertificatePassword=${{ secrets.Pfx_Key }}
       env:
         AppxBundle: Never
@@ -98,7 +96,7 @@ jobs:
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-artifact
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v1
+      uses: actions/upload-artifact@v2
       with:
         name: MSIX Package
-        path: ${{ env.Wap_Project_Directory }}\${{ env.App_Packages_Directory }}
+        path: $env:Publish_Path
