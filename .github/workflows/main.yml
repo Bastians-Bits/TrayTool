@@ -94,16 +94,16 @@ jobs:
     #- name: Remove the .pfx
     #  run: Remove-Item -path $env:Wap_Project_Directory\$env:SigningCertificate
 
-    - name: Archive Artifact
-      uses: thedoctor0/zip-release@master
-      with:
-        type: zip
-        directory: TrayTool/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net5.0-windows/win-x64/
-        filename: drop/release-${{ matrix.targetplatform }}-${{ matrix.configuration }}.zip
+    #- name: Archive Artifact
+    #  uses: thedoctor0/zip-release@master
+    #  with:
+    #    type: zip
+    #    directory: TrayTool/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net5.0-windows/win-x64/
+    #    filename: drop/release-${{ matrix.targetplatform }}-${{ matrix.configuration }}.zip
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
         name: release-${{ matrix.targetplatform }}-${{ matrix.configuration }}.zip
-        path: TrayTool/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net5.0-windows/win-x64/drop
+        path: TrayTool/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net5.0-windows/win-x64/
