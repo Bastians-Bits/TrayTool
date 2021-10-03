@@ -98,5 +98,4 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: MSIX Package
         path: $env:Publish_Path
