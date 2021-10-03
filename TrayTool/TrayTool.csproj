@@ -26,6 +26,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>TrayTool.App</StartupObject>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>TrayTool.pfx</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
   </PropertyGroup>
   <ItemGroup>
     <Resource Include="Resources\Folder.png" />
