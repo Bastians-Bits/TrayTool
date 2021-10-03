@@ -105,5 +105,5 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: release-${{ matrix.targetplatform }}-${{ matrix.configuration }}.zip
+        name: TrayTool/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net5.0-windows/win-x64/release-${{ matrix.targetplatform }}-${{ matrix.configuration }}.zip
         path: drop
