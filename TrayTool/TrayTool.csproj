@@ -23,12 +23,19 @@
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>TrayTool.App</StartupObject>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>TrayTool.pfx</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <WarningLevel>2</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <WarningLevel>2</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Resource Include="Resources\Folder.png" />
