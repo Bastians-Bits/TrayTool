@@ -94,8 +94,15 @@ jobs:
     #- name: Remove the .pfx
     #  run: Remove-Item -path $env:Wap_Project_Directory\$env:SigningCertificate
 
+    - name: Archive Artifact
+      uses: thedoctor0/zip-release@master
+      with:
+        type: zip
+        filename: release.zip
+
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v2
       with:
         path: $env:Publish_Path
+        name: release.zip
