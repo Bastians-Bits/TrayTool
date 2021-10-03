@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Media.Imaging;
 using TrayTool.Repository.Model;
@@ -10,56 +11,58 @@ namespace TrayTool
     {
         public static Seperator UpdateImage(this Seperator seperator, string path)
         {
+            if (path == null || path.Trim().Length == 0) path = RestorePath(seperator);
+
             seperator.ImagePath = path;
 
-            Image image = CreateImage(path);
+            Bitmap image = CreateImage(path);
 
             using (MemoryStream memoryStream = new MemoryStream())
             {
-                image.Save(memoryStream, image.RawFormat);
+                image.Save(memoryStream, ImageFormat.Png);
                 seperator.Image = memoryStream.ToArray();
             }
 
             return seperator;
         }
 
-        private static Image CreateImage(string uri)
+        private static Bitmap CreateImage(string uri)
         {
-            Uri bitmapUri = new Uri(IsResource(uri), UriKind.RelativeOrAbsolute);
+            Bitmap bitmap;
 
-            BitmapImage bitmapImage = new BitmapImage(bitmapUri);
+            if (IsResource(ref uri)) {
+                Uri bitmapUri = new Uri(uri, UriKind.RelativeOrAbsolute);
 
-            MemoryStream ms = new MemoryStream();
-            PngBitmapEncoder encoder = new PngBitmapEncoder();
-            encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
-            encoder.Save(ms);
+                BitmapImage bitmapImage = new BitmapImage(bitmapUri);
 
-            Bitmap bitmap = new Bitmap(ms);
+                MemoryStream ms = new MemoryStream();
+                PngBitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+                encoder.Save(ms);
+
+                bitmap = new Bitmap(ms);
+            } else
+            {
+                Icon exeIcon = Icon.ExtractAssociatedIcon(uri);
+                bitmap = exeIcon.ToBitmap();
+            }
+
             return bitmap;
         }
 
-        /// <summary>
-        /// Whether the image locates in the applications resources or the filesystem
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        private static string IsResource(string source)
+        private static bool IsResource(ref string source)
         {
             if (source != null && source.StartsWith("/TrayTool;component/"))
             {
-                return "pack://application:,,," + source;
+                source = "pack://application:,,," + source;
+                return true;
             }
             else
             {
-                return source;
+                return false;
             }
         }
 
-        /// <summary>
-        /// Checks whether a given item is an ancestor of the calling item is.
-        /// </summary>
-        /// <param name="item">The presumably ancestor</param>
-        /// <returns>True, of is an ancestor, otherwise false</returns>
         public static bool IsAncestor(this Seperator seperator, Seperator item)
         {
             Seperator parent = seperator.Parent;
@@ -73,6 +76,16 @@ namespace TrayTool
                 parent = parent.Parent;
             }
             return false;
+        }
+
+        public static string RestorePath(Seperator seperator)
+        {
+            if (seperator is Item)
+                return "/TrayTool;component/Resources/Shortcut.png";
+            if (seperator is Repository.Model.Directory)
+                return "/TrayTool;component/Resources/Folder.png";
+            else
+                return "/TrayTool;component/Resources/Seperator.png";
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿ using Microsoft.EntityFrameworkCore;
 using NLog;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using System.Windows.Input;
+using TrayTool.Repository;
 using TrayTool.Repository.Model;
 
 namespace TrayTool.ViewModel
@@ -15,7 +16,7 @@ namespace TrayTool.ViewModel
     /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
-        public DbContext Context;
+        public TrayToolDb Context { get; set; }
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public event PropertyChangedEventHandler PropertyChanged;
         private Seperator _treeView_Selected;
@@ -33,10 +34,22 @@ namespace TrayTool.ViewModel
         /// </summary>
         public ICommand ButtonBrowserPath { get; private set; }
 
+        private ObservableCollection<BaseModel> _items;
+
         /// <summary>
         /// A list of all items in the application
         /// </summary>
-        public ObservableCollection<BaseModel> Items { get; set; }
+        public ObservableCollection<BaseModel> Items { 
+            get 
+            { 
+                return _items;
+            } 
+            set 
+            { 
+                SetProperty(ref _items, value);
+            } 
+        }
+
         /// <summary>
         /// The currently selected treeview item
         /// </summary>
@@ -59,6 +72,12 @@ namespace TrayTool.ViewModel
             ButtonAdd = new DelegateCommand(ButtonAddClick);
             ButtonRemove = new DelegateCommand(ButtonRemoveClick);
             ButtonBrowserPath = new DelegateCommand(ButtonBrowserPathClick);
+
+            Context = new TrayToolDb();
+            Context.Database.Migrate();
+
+            Context.BaseModels.Load();
+            Items = Context.BaseModels.Local.ToObservableCollection();
         }
 
         /// <summary>
@@ -121,6 +140,9 @@ namespace TrayTool.ViewModel
                 Items.Add(CreateNewInstance(CbAddChooser_Selected, null));
                 logger.Debug("Added instance {instance} to the directory {directory}", CbAddChooser_Selected, "ROOT");
             }
+
+            Context.SaveChanges();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Items"));
             logger.Trace("ButtonAddClick left");
         }
 
@@ -154,6 +176,9 @@ namespace TrayTool.ViewModel
                     }
                 }
             }
+
+            Context.SaveChanges();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Items"));
             logger.Trace("ButtonRemoveClick left");
         }
 
@@ -169,7 +194,11 @@ namespace TrayTool.ViewModel
             {
                 Item item = (Item)TreeView_Selected;
                 item.Path = openFileDialog.FileName;
+                item.UpdateImage(item.Path);
             }
+
+            Context.SaveChanges();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Items"));
         }
 
         /// <summary>
@@ -189,7 +218,7 @@ namespace TrayTool.ViewModel
                         Name = "New Item",
                         Parent = parent
                     };
-                    instance.UpdateImage("/TrayTool;component/Resources/Shortcut.png");
+                    instance.UpdateImage(null);
                     break;
                 case 1:
                     instance = new Directory()
@@ -197,14 +226,14 @@ namespace TrayTool.ViewModel
                         Name = "New Directory",
                         Parent = parent
                     };
-                    instance.UpdateImage("/TrayTool;component/Resources/Folder.png");
+                    instance.UpdateImage(null);
                     break;
                 case 2:
                     instance = new Seperator()
                     {
                         Parent = parent
                     };
-                    instance.UpdateImage("/TrayTool;component/Resources/Seperator.png");
+                    instance.UpdateImage(null);
                     break;
             }
             return instance;

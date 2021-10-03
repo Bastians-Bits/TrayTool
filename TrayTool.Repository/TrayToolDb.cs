@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using TrayTool.Repository.Model;
 
 namespace TrayTool.Repository
@@ -18,6 +17,15 @@ namespace TrayTool.Repository
             base.OnConfiguring(optionsBuilder);
 
             optionsBuilder.UseSqlite("data source=testdb.sqlite;");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<BaseModel>().Property(p => p.Id).ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<BaseModel>().ToTable("BaseModel");
         }
     }
 }

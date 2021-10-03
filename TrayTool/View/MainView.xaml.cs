@@ -1,17 +1,13 @@
 ﻿using System.Windows;
 using System.Collections.ObjectModel;
-using TrayTool.Model;
 using TrayTool.ViewModel;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
-using System.Windows.Input;
-using System.Xml.Serialization;
-using System.Text;
-using System.Windows.Controls;
 using TrayTool.Repository.Model;
 using TrayTool.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace TrayTool.View
 {
@@ -34,10 +30,7 @@ namespace TrayTool.View
         public MainWindow()
         {
             ViewModel = new MainViewModel();
-            var context = new TrayToolDb();
-            ViewModel.Context = context;
-            context.Database.EnsureCreated();
-            ViewModel.Items = new ObservableCollection<BaseModel>(context.BaseModels);
+            
             DataContext = ViewModel;
 
             InitializeComponent();
@@ -65,11 +58,19 @@ namespace TrayTool.View
             menu.Items.Add(seperator);
 
             ToolStripMenuItem menuItemExit = new ToolStripMenuItem("Exit");
-            menuItemExit.Click += new EventHandler(BtnExit_OnClick);
+            menuItemExit.Click += new EventHandler((sender, e) => 
+            {
+                systemTray.Visible = false;
+                Environment.Exit(0);
+            });
             menu.Items.Add(menuItemExit);
 
             ToolStripMenuItem menuItemOpenApp = new ToolStripMenuItem("Open App");
-            menuItemOpenApp.Click += new EventHandler(BtnOpenApp_OnClick);
+            menuItemOpenApp.Click += new EventHandler((sender, e) => 
+            {
+                Show();
+                systemTray.Visible = false;
+            });
             menu.Items.Add(menuItemOpenApp);
 
             systemTray.ContextMenuStrip = menu;
@@ -79,18 +80,6 @@ namespace TrayTool.View
             Hide();
 
             e.Cancel = true;
-        }
-
-        private void BtnExit_OnClick(object sender, EventArgs e)
-        {
-            systemTray.Visible = false;
-            Environment.Exit(0);
-        }
-
-        private void BtnOpenApp_OnClick(object sender, EventArgs e)
-        {
-            Show();
-            systemTray.Visible = false;
         }
     }
 }

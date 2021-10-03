@@ -9,7 +9,7 @@ using TrayTool.Repository;
 namespace TrayTool.Repository.Migrations
 {
     [DbContext(typeof(TrayToolDb))]
-    [Migration("20211003134616_InitialCreate")]
+    [Migration("20211003175352_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -17,6 +17,31 @@ namespace TrayTool.Repository.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.10");
+
+            modelBuilder.Entity("TrayTool.Repository.Model.Argument", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Concatenator")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid?>("ItemId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Key")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemId");
+
+                    b.ToTable("Arguments");
+                });
 
             modelBuilder.Entity("TrayTool.Repository.Model.BaseModel", b =>
                 {
@@ -31,34 +56,16 @@ namespace TrayTool.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Order")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DirectoryId");
 
-                    b.ToTable("BaseModels");
+                    b.ToTable("BaseModel");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("BaseModel");
-                });
-
-            modelBuilder.Entity("TrayTool.Repository.Model.Argument", b =>
-                {
-                    b.HasBaseType("TrayTool.Repository.Model.BaseModel");
-
-                    b.Property<string>("Concatenator")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid?>("ItemId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Key")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("TEXT");
-
-                    b.HasIndex("ItemId");
-
-                    b.HasDiscriminator().HasValue("Argument");
                 });
 
             modelBuilder.Entity("TrayTool.Repository.Model.Seperator", b =>
@@ -106,18 +113,18 @@ namespace TrayTool.Repository.Migrations
                     b.HasDiscriminator().HasValue("Item");
                 });
 
-            modelBuilder.Entity("TrayTool.Repository.Model.BaseModel", b =>
-                {
-                    b.HasOne("TrayTool.Repository.Model.Directory", null)
-                        .WithMany("Children")
-                        .HasForeignKey("DirectoryId");
-                });
-
             modelBuilder.Entity("TrayTool.Repository.Model.Argument", b =>
                 {
                     b.HasOne("TrayTool.Repository.Model.Item", null)
                         .WithMany("Arguments")
                         .HasForeignKey("ItemId");
+                });
+
+            modelBuilder.Entity("TrayTool.Repository.Model.BaseModel", b =>
+                {
+                    b.HasOne("TrayTool.Repository.Model.Directory", null)
+                        .WithMany("Children")
+                        .HasForeignKey("DirectoryId");
                 });
 
             modelBuilder.Entity("TrayTool.Repository.Model.Seperator", b =>
