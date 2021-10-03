@@ -26,7 +26,7 @@ jobs:
 
     env:
       App_Packages_Directory: AppPackages
-      SigningCertificate: GitHubActionsDemo.pfx
+      SigningCertificate: TrayTool.pfx
       Solution_Path: TrayTool.sln
       #Test_Project_Path: MyWpfApp.Tests\MyWpfApp.Tests.csproj
       Wpf_Project_Path: TrayTool\TrayTool.csproj
