@@ -98,7 +98,7 @@ jobs:
       uses: thedoctor0/zip-release@master
       with:
         type: zip
-        path: TrayTool/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net5.0-windows/win-x64/
+        directory: TrayTool/bin/${{ matrix.targetplatform }}/${{ matrix.configuration }}/net5.0-windows/win-x64/
         filename: drop/release-${{ matrix.targetplatform }}-${{ matrix.configuration }}.zip
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-artifact
