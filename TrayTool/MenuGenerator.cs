@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
-using TrayTool.Model;
 using System;
 using NLog;
+using TrayTool.Repository.Model;
+using System.IO;
+using System.Drawing;
 
 namespace TrayTool
 {
@@ -39,9 +41,9 @@ namespace TrayTool
             {
                 ToolStripItem menuItem = new ToolStripMenuItem();
 
-                if (model is Directory)
+                if (model is Repository.Model.Directory)
                 {
-                    Directory dir = (Directory)model;
+                    Repository.Model.Directory dir = (Repository.Model.Directory)model;
                     menuItem.Text = dir.Name;
                     CreateSubMenu((ToolStripMenuItem)menuItem, new List<BaseModel>(dir.Children));
                 }
@@ -58,7 +60,10 @@ namespace TrayTool
 
                 menuItem.Tag = model;
 
-                menuItem.Image = model.Image;
+                using (var memoreStream = new MemoryStream(model.Image))
+                {
+                    menuItem.Image = Image.FromStream(memoreStream);
+                }
 
                 if (menu != null)
                     menu.DropDownItems.Add(menuItem);

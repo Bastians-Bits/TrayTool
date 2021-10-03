@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace TrayTool
+namespace TrayTool.Converter
 {
     class VisibilityConverter : IValueConverter
     {

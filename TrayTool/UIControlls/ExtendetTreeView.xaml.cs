@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using TrayTool.Model;
+using TrayTool.Repository.Model;
 using TrayTool.View;
 using TrayTool.ViewModel;
 
@@ -196,6 +197,26 @@ namespace TrayTool.UIControlls
                     break;
             }
             ((MainViewModel)DataContext).Move(move);
+        }
+
+        /// <summary>
+        /// Checks whether a given item is an ancestor of the calling item is.
+        /// </summary>
+        /// <param name="item">The presumably ancestor</param>
+        /// <returns>True, of is an ancestor, otherwise false</returns>
+        public bool IsAncestor(Seperator item)
+        {
+            Seperator parent = item.Parent;
+
+            while (parent != null)
+            {
+                if (parent == item)
+                {
+                    return true;
+                }
+                parent = parent.Parent;
+            }
+            return false;
         }
     }
 }

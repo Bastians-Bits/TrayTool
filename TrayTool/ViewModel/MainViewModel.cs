@@ -1,11 +1,12 @@
-﻿using NLog;
+﻿using Microsoft.EntityFrameworkCore;
+using NLog;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using System.Windows.Input;
-using TrayTool.Model;
+using TrayTool.Repository.Model;
 
 namespace TrayTool.ViewModel
 {
@@ -14,9 +15,9 @@ namespace TrayTool.ViewModel
     /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
+        public DbContext Context;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public event PropertyChangedEventHandler PropertyChanged;
-        private ObservableCollection<BaseModel> _items;
         private Seperator _treeView_Selected;
 
         /// <summary>
@@ -35,9 +36,7 @@ namespace TrayTool.ViewModel
         /// <summary>
         /// A list of all items in the application
         /// </summary>
-        public ObservableCollection<BaseModel> Items { get => _items; set => SetProperty(ref _items, value); }
-        // A list of all argument templates in the application
-        public ObservableCollection<ArguementTemplate> ArguementTemplates { get; set; }
+        public ObservableCollection<BaseModel> Items { get; set; }
         /// <summary>
         /// The currently selected treeview item
         /// </summary>
@@ -181,47 +180,54 @@ namespace TrayTool.ViewModel
         /// <returns></returns>
         public Seperator CreateNewInstance(int target, Directory parent)
         {
+            Seperator instance = null;
             switch (target)
             {
                 case 0:
-                    return new Item()
+                    instance = new Item()
                     {
                         Name = "New Item",
                         Parent = parent
                     };
+                    instance.UpdateImage("/TrayTool;component/Resources/Shortcut.png");
+                    break;
                 case 1:
-                    return new Directory()
+                    instance = new Directory()
                     {
                         Name = "New Directory",
                         Parent = parent
                     };
+                    instance.UpdateImage("/TrayTool;component/Resources/Folder.png");
+                    break;
                 case 2:
-                    return new Seperator()
+                    instance = new Seperator()
                     {
                         Parent = parent
                     };
+                    instance.UpdateImage("/TrayTool;component/Resources/Seperator.png");
+                    break;
             }
-            return null;
+            return instance;
         }
 
         /// <summary>
         /// Main Method to handle movement
         /// </summary>
         /// <param name="movement">the movement to handle</param>
-        public void Move(Movement movement)
+        public void Move(Model.Movement movement)
         {
             switch (movement.Moevement)
             {
-                case Movement.Direction.UP:
+                case Model.Movement.Direction.UP:
                     MoveUp(movement.Item);
                     break;
-                case Movement.Direction.DOWN:
+                case Model.Movement.Direction.DOWN:
                     MoveDown(movement.Item);
                     break;
-                case Movement.Direction.LEFT:
+                case Model.Movement.Direction.LEFT:
                     MoveLeft(movement.Item);
                     break;
-                case Movement.Direction.RIGHT:
+                case Model.Movement.Direction.RIGHT:
                     MoveRight(movement.Item, movement.Index);
                     break;
             }
@@ -246,11 +252,13 @@ namespace TrayTool.ViewModel
                 // In the current hierarchy, this makes no sense, BaseModel is always a Seperator, but this way we are future-proof
                 if (item is Seperator seperator)
                 {
-                    ObservableCollection<BaseModel> siblings = seperator.Parent.Children;
+                    IList<BaseModel> siblings = seperator.Parent.Children;
                     int index = siblings.IndexOf(item) - 1;
                     if (index >= 0)
                     {
-                        siblings.Move(siblings.IndexOf(item), siblings.IndexOf(item) - 1);
+                        siblings.RemoveAt(index + 1);
+                        siblings.Insert(index, item);
+                        //siblings.Move(siblings.IndexOf(item), siblings.IndexOf(item) - 1);
                     }
                 }
             }
@@ -275,11 +283,13 @@ namespace TrayTool.ViewModel
                 // In the current hierarchy, this makes no sense, BaseModel is always a Seperator, but this way we are future-proof
                 if (item is Seperator seperator)
                 {
-                    ObservableCollection<BaseModel> siblings = seperator.Parent.Children;
+                    IList<BaseModel> siblings = seperator.Parent.Children;
                     int index = siblings.IndexOf(item) + 1;
                     if (index <= siblings.Count - 1)
                     {
-                        siblings.Move(siblings.IndexOf(item), siblings.IndexOf(item) + 1);
+                        siblings.RemoveAt(index - 1);
+                        siblings.Insert(index, item);
+                        //siblings.Move(siblings.IndexOf(item), siblings.IndexOf(item) + 1);
                     }
                 }
             }

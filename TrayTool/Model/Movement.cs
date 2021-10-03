@@ -17,7 +17,7 @@
         /// <summary>
         /// The item which is moved
         /// </summary>
-        public BaseModel Item { get; set; }
+        public TrayTool.Repository.Model.BaseModel Item { get; set; }
         /// <summary>
         /// The index of the parent item, in case the object is moved to a lower level
         /// </summary>

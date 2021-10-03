@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace TrayTool
+namespace TrayTool.Converter
 {
     /// <summary>
     /// This class adds a given padding to the object by substring the parameter from the width.
