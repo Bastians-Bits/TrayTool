@@ -20,7 +20,7 @@ namespace TrayTool
         /// </summary>
         /// <param name="models">The list of items</param>
         /// <returns>A context menu</returns>
-        public ContextMenuStrip GeneratorMenu(List<BaseModel> models)
+        public ContextMenuStrip GeneratorMenu(List<BaseModelEntity> models)
         {
             ContextMenuStrip menu = CreateSubMenu(null, models);
 
@@ -33,27 +33,27 @@ namespace TrayTool
         /// <param name="menu">The current state of the menu. Will be used as reference</param>
         /// <param name="models">The list of models to append</param>
         /// <returns>A sub context for the context menu</returns>
-        private ContextMenuStrip CreateSubMenu(ToolStripMenuItem menu, List<BaseModel> models)
+        private ContextMenuStrip CreateSubMenu(ToolStripMenuItem menu, List<BaseModelEntity> models)
         {
             ContextMenuStrip contextMenu = new ContextMenuStrip();
 
-            foreach (Seperator model in models)
+            foreach (SeperatorEntity model in models)
             {
                 ToolStripItem menuItem = new ToolStripMenuItem();
 
-                if (model is Repository.Model.Directory)
+                if (model is Repository.Model.DirectoryEntity)
                 {
-                    Repository.Model.Directory dir = (Repository.Model.Directory)model;
+                    Repository.Model.DirectoryEntity dir = (Repository.Model.DirectoryEntity)model;
                     menuItem.Text = dir.Name;
-                    CreateSubMenu((ToolStripMenuItem)menuItem, new List<BaseModel>(dir.Children));
+                    CreateSubMenu((ToolStripMenuItem)menuItem, new List<BaseModelEntity>(dir.Children));
                 }
-                else if (model is Item)
+                else if (model is ItemEntity)
                 {
-                    Item item = (Item)model;
+                    ItemEntity item = (ItemEntity)model;
                     menuItem.Text = item.Name;
                     menuItem.Click += new EventHandler(executeAction);
                 }
-                else if (model is Seperator) // Seperator has to be asked last, since Directories and Items are Seperators, too
+                else if (model is SeperatorEntity) // Seperator has to be asked last, since Directories and Items are Seperators, too
                 {
                     menuItem = new ToolStripSeparator();
                 }
@@ -81,15 +81,15 @@ namespace TrayTool
         /// <param name="e">The event arguments</param>
         private void executeAction(object sender, EventArgs e)
         {
-            if (sender is ToolStripMenuItem item && (item.Tag is Item caller))
+            if (sender is ToolStripMenuItem item && (item.Tag is ItemEntity caller))
             {
                 try
                 {
                     string path = caller.Path;
-                    List<Argument> arguments = new List<Argument>(caller.Arguments);
+                    List<ArgumentEntity> arguments = new List<ArgumentEntity>(caller.Arguments);
 
                     string argument = "";
-                    foreach (Argument arg in arguments)
+                    foreach (ArgumentEntity arg in arguments)
                     {
                         argument += arg.Key;
                         if (arg.Concatenator != null && arg.Concatenator.Length > 0)

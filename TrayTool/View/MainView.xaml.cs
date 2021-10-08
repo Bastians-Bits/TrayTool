@@ -42,7 +42,7 @@ namespace TrayTool.View
         {
             ContextMenuStrip menu = new ContextMenuStrip();
 
-            List<BaseModel> items = new List<BaseModel>(ViewModel.Items);
+            List<BaseModelEntity> items = new List<BaseModelEntity>(ViewModel.Items);
 
             try
             {

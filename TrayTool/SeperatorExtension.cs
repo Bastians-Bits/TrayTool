@@ -9,7 +9,7 @@ namespace TrayTool
 {
     public static class SeperatorExtension
     {
-        public static Seperator UpdateImage(this Seperator seperator, string path)
+        public static SeperatorEntity UpdateImage(this SeperatorEntity seperator, string path)
         {
             if (path == null || path.Trim().Length == 0) path = RestorePath(seperator);
 
@@ -63,9 +63,9 @@ namespace TrayTool
             }
         }
 
-        public static bool IsAncestor(this Seperator seperator, Seperator item)
+        public static bool IsAncestor(this SeperatorEntity seperator, SeperatorEntity item)
         {
-            Seperator parent = seperator.Parent;
+            SeperatorEntity parent = seperator.Parent;
 
             while (parent != null)
             {
@@ -78,11 +78,11 @@ namespace TrayTool
             return false;
         }
 
-        public static string RestorePath(Seperator seperator)
+        public static string RestorePath(SeperatorEntity seperator)
         {
-            if (seperator is Item)
+            if (seperator is ItemEntity)
                 return "/TrayTool;component/Resources/Shortcut.png";
-            if (seperator is Repository.Model.Directory)
+            if (seperator is Repository.Model.DirectoryEntity)
                 return "/TrayTool;component/Resources/Folder.png";
             else
                 return "/TrayTool;component/Resources/Seperator.png";

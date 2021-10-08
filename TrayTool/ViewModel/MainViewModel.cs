@@ -1,4 +1,4 @@
-﻿ using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NLog;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,7 +19,7 @@ namespace TrayTool.ViewModel
         public TrayToolDb Context { get; set; }
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public event PropertyChangedEventHandler PropertyChanged;
-        private Seperator _treeView_Selected;
+        private SeperatorEntity _treeView_Selected;
 
         /// <summary>
         /// Delegater for the Add Button
@@ -34,12 +34,12 @@ namespace TrayTool.ViewModel
         /// </summary>
         public ICommand ButtonBrowserPath { get; private set; }
 
-        private ObservableCollection<BaseModel> _items;
+        private ObservableCollection<BaseModelEntity> _items;
 
         /// <summary>
         /// A list of all items in the application
         /// </summary>
-        public ObservableCollection<BaseModel> Items { 
+        public ObservableCollection<BaseModelEntity> Items { 
             get 
             { 
                 return _items;
@@ -53,7 +53,7 @@ namespace TrayTool.ViewModel
         /// <summary>
         /// The currently selected treeview item
         /// </summary>
-        public Seperator TreeView_Selected {
+        public SeperatorEntity TreeView_Selected {
             get
             {
                 return _treeView_Selected;
@@ -76,7 +76,7 @@ namespace TrayTool.ViewModel
             Context = new TrayToolDb();
             Context.Database.Migrate();
 
-            Context.BaseModels.Load();
+            Context.BaseModels.Include(i => (i as ItemEntity).Arguments).Load();
             Items = Context.BaseModels.Local.ToObservableCollection();
         }
 
@@ -108,7 +108,7 @@ namespace TrayTool.ViewModel
             logger.Trace("ButtonAddClick called");
             if (TreeView_Selected != null)
             {
-                if (TreeView_Selected is Directory directory)
+                if (TreeView_Selected is DirectoryEntity directory)
                 {
                     directory.Children.Add(CreateNewInstance(CbAddChooser_Selected, directory));
                     logger.Debug("Added instance {instance} to the directory {directory}", CbAddChooser_Selected, directory.Name);
@@ -192,7 +192,7 @@ namespace TrayTool.ViewModel
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                Item item = (Item)TreeView_Selected;
+                ItemEntity item = (ItemEntity)TreeView_Selected;
                 item.Path = openFileDialog.FileName;
                 item.UpdateImage(item.Path);
             }
@@ -207,13 +207,13 @@ namespace TrayTool.ViewModel
         /// <param name="target">the target type; 0 = Item, 1 = Directory, 2 = Seperator</param>
         /// <param name="parent"></param>
         /// <returns></returns>
-        public Seperator CreateNewInstance(int target, Directory parent)
+        public SeperatorEntity CreateNewInstance(int target, DirectoryEntity parent)
         {
-            Seperator instance = null;
+            SeperatorEntity instance = null;
             switch (target)
             {
                 case 0:
-                    instance = new Item()
+                    instance = new ItemEntity()
                     {
                         Name = "New Item",
                         Parent = parent
@@ -221,7 +221,7 @@ namespace TrayTool.ViewModel
                     instance.UpdateImage(null);
                     break;
                 case 1:
-                    instance = new Directory()
+                    instance = new DirectoryEntity()
                     {
                         Name = "New Directory",
                         Parent = parent
@@ -229,7 +229,7 @@ namespace TrayTool.ViewModel
                     instance.UpdateImage(null);
                     break;
                 case 2:
-                    instance = new Seperator()
+                    instance = new SeperatorEntity()
                     {
                         Parent = parent
                     };
@@ -266,7 +266,7 @@ namespace TrayTool.ViewModel
         /// Move the given item a postion up
         /// </summary>
         /// <param name="item">The item to move</param>
-        private void MoveUp(BaseModel item)
+        private void MoveUp(BaseModelEntity item)
         {
             if (IsRoot(item))
             {
@@ -279,9 +279,9 @@ namespace TrayTool.ViewModel
             else
             {
                 // In the current hierarchy, this makes no sense, BaseModel is always a Seperator, but this way we are future-proof
-                if (item is Seperator seperator)
+                if (item is SeperatorEntity seperator)
                 {
-                    IList<BaseModel> siblings = seperator.Parent.Children;
+                    IList<BaseModelEntity> siblings = seperator.Parent.Children;
                     int index = siblings.IndexOf(item) - 1;
                     if (index >= 0)
                     {
@@ -297,7 +297,7 @@ namespace TrayTool.ViewModel
         /// Move the given item a position to the right
         /// </summary>
         /// <param name="item">The item to move</param>
-        private void MoveDown(BaseModel item)
+        private void MoveDown(BaseModelEntity item)
         {
             if (IsRoot(item))
             {
@@ -310,9 +310,9 @@ namespace TrayTool.ViewModel
             else
             {
                 // In the current hierarchy, this makes no sense, BaseModel is always a Seperator, but this way we are future-proof
-                if (item is Seperator seperator)
+                if (item is SeperatorEntity seperator)
                 {
-                    IList<BaseModel> siblings = seperator.Parent.Children;
+                    IList<BaseModelEntity> siblings = seperator.Parent.Children;
                     int index = siblings.IndexOf(item) + 1;
                     if (index <= siblings.Count - 1)
                     {
@@ -328,15 +328,15 @@ namespace TrayTool.ViewModel
         /// Move the given item a position to the left
         /// </summary>
         /// <param name="item">The item to move</param>
-        private void MoveLeft(BaseModel item)
+        private void MoveLeft(BaseModelEntity item)
         {
             if (!IsRoot(item))
             {
                 // In the current hierarchy, this makes no sense, BaseModel is always a Seperator, but this way we are future-proof
-                if (item is Seperator seperator)
+                if (item is SeperatorEntity seperator)
                 {
-                    Directory oldParent = seperator.Parent;
-                    Directory newParent = oldParent.Parent;
+                    DirectoryEntity oldParent = seperator.Parent;
+                    DirectoryEntity newParent = oldParent.Parent;
 
                     // Remove old assignment
                     oldParent.Children.Remove(item);
@@ -362,16 +362,16 @@ namespace TrayTool.ViewModel
         /// </summary>
         /// <param name="item">The item to move</param>
         /// <param name="index">The index of the new parent (WIP)</param>
-        private void MoveRight(BaseModel item, int? index = null)
+        private void MoveRight(BaseModelEntity item, int? index = null)
         {
-            Directory newParent = NearestDirectory(item);
+            DirectoryEntity newParent = NearestDirectory(item);
             
             if (newParent != null)
             {
                 // Open the new parent directory for better visibility
                 newParent.IsExpanded = true;
                 // In the current hierarchy, this makes no sense, BaseModel is always a Seperator, but this way we are future-proof
-                if (item is Seperator seperator)
+                if (item is SeperatorEntity seperator)
                 {
                     if (IsRoot(item))
                     {
@@ -392,9 +392,9 @@ namespace TrayTool.ViewModel
         /// </summary>
         /// <param name="item">The item to check</param>
         /// <returns>True, if is a root element, otherwise false</returns>
-        public bool IsRoot(BaseModel item)
+        public bool IsRoot(BaseModelEntity item)
         {
-            if (item is Seperator seperator)
+            if (item is SeperatorEntity seperator)
             {
                 if (seperator.Parent == null)
                 {
@@ -409,17 +409,17 @@ namespace TrayTool.ViewModel
         /// </summary>
         /// <param name="item">The item to search by</param>
         /// <returns>The directory, null if none has been found</returns>
-        public Directory NearestDirectory(BaseModel item)
+        public DirectoryEntity NearestDirectory(BaseModelEntity item)
         {
             int myIndex;
             if (IsRoot(item))
             {
                 // Get the next directory from the list
                 myIndex = Items.IndexOf(item);
-                if (item is Directory) myIndex++; 
+                if (item is DirectoryEntity) myIndex++; 
                 for (; myIndex < Items.Count; myIndex++)
                 {
-                    if (Items[myIndex] is Directory directory)
+                    if (Items[myIndex] is DirectoryEntity directory)
                     {
                         return directory;
                     }
@@ -428,11 +428,11 @@ namespace TrayTool.ViewModel
             else
             {
                 // Get the next directory from the siblings
-                myIndex = ((Seperator)item).Parent.Children.IndexOf(item);
-                if (item is Directory) myIndex++;
-                for (; myIndex < ((Seperator)item).Parent.Children.Count; myIndex++)
+                myIndex = ((SeperatorEntity)item).Parent.Children.IndexOf(item);
+                if (item is DirectoryEntity) myIndex++;
+                for (; myIndex < ((SeperatorEntity)item).Parent.Children.Count; myIndex++)
                 {
-                    if (((Seperator)item).Parent.Children[myIndex] is Directory directory)
+                    if (((SeperatorEntity)item).Parent.Children[myIndex] is DirectoryEntity directory)
                     {
                         return directory;
                     }

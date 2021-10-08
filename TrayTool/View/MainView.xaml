@@ -27,17 +27,17 @@
             <ContentPresenter Content="{Binding TreeView_Selected}" VerticalAlignment="Top">
                 <ContentPresenter.Resources>
                     <!-- Grid Item -->
-                    <DataTemplate DataType="{x:Type Model:Item}">
+                    <DataTemplate DataType="{x:Type Model:ItemEntity}">
                         <UIControlls:DCItem />
                     </DataTemplate>
 
                     <!-- Grid Directory -->
-                    <DataTemplate DataType="{x:Type Model:Directory}">
+                    <DataTemplate DataType="{x:Type Model:DirectoryEntity}">
                         <UIControlls:UCDirectory />
                     </DataTemplate>
                     
                     <!-- Grid Seperator -->
-                    <DataTemplate DataType="{x:Type Model:Seperator}">
+                    <DataTemplate DataType="{x:Type Model:SeperatorEntity}">
                         <UIControlls:UCSeperator />
                     </DataTemplate>
                 </ContentPresenter.Resources>

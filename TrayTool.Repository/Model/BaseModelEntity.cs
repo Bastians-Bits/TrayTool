@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace TrayTool.Repository.Model
 {
-    public class BaseModel
+    public class BaseModelEntity
     {
         [Key]
         public Guid Id { get; set; }

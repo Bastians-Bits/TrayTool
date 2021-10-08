@@ -2,7 +2,7 @@
 
 namespace TrayTool.Repository.Model
 {
-    public class Argument
+    public class ArgumentEntity
     {
         public Guid Id { get; set; }
         public string Key { get; set; }

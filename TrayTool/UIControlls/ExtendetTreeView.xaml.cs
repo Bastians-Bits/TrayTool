@@ -24,11 +24,11 @@ namespace TrayTool.UIControlls
             InitializeComponent();
         }
 
-        private TreeViewItem GetContainerFromStuff(Seperator stuff)
+        private TreeViewItem GetContainerFromStuff(SeperatorEntity stuff)
         {
-            Stack<Seperator> _stack = new Stack<Seperator>();
+            Stack<SeperatorEntity> _stack = new Stack<SeperatorEntity>();
             _stack.Push(stuff);
-            Seperator parent = stuff.Parent;
+            SeperatorEntity parent = stuff.Parent;
 
             while (parent != null)
             {
@@ -39,7 +39,7 @@ namespace TrayTool.UIControlls
             ItemsControl container = treeView;
             while ((_stack.Count > 0) && (container != null))
             {
-                BaseModel top = _stack.Pop();
+                BaseModelEntity top = _stack.Pop();
                 container = (ItemsControl)container.ItemContainerGenerator.ContainerFromItem(top);
             }
 
@@ -82,7 +82,7 @@ namespace TrayTool.UIControlls
                 if ((Math.Abs(currentPosition.X - _lastMouseDown.X) > 2.0) ||
                     (Math.Abs(currentPosition.Y - _lastMouseDown.Y) > 2.0))
                 {
-                    Seperator selectedItem = (Seperator)treeView.SelectedItem;
+                    SeperatorEntity selectedItem = (SeperatorEntity)treeView.SelectedItem;
                     if (selectedItem != null)
                     {
                         TreeViewItem container = GetContainerFromStuff(selectedItem);
@@ -104,8 +104,8 @@ namespace TrayTool.UIControlls
             TreeViewItem container = GetNearestContainer(e.OriginalSource as UIElement);
             if (container != null)
             {
-                Seperator sourceStuff = (Seperator)e.Data.GetData(e.Data.GetFormats()[0]);
-                Seperator targetStuff = (Seperator)container.Header;
+                SeperatorEntity sourceStuff = (SeperatorEntity)e.Data.GetData(e.Data.GetFormats()[0]);
+                SeperatorEntity targetStuff = (SeperatorEntity)container.Header;
                 if ((sourceStuff != null) && (targetStuff != null))
                 {
                     // source can't be target and source can't be an ancestor of target
@@ -121,12 +121,12 @@ namespace TrayTool.UIControlls
                             ((MainViewModel)DataContext).Items.Remove(sourceStuff);
                         }
                         // Add it to the new one
-                        if (targetStuff is Directory)
+                        if (targetStuff is DirectoryEntity)
                         {
                             // It is dragged to a dir, add it to the dir
-                            ((Directory)targetStuff).Children.Add(sourceStuff);
-                            sourceStuff.Parent = (Directory)targetStuff;
-                            ((Directory)targetStuff).IsExpanded = true;
+                            ((DirectoryEntity)targetStuff).Children.Add(sourceStuff);
+                            sourceStuff.Parent = (DirectoryEntity)targetStuff;
+                            ((DirectoryEntity)targetStuff).IsExpanded = true;
                         }
                         else
                         {
@@ -149,7 +149,7 @@ namespace TrayTool.UIControlls
             }
             else
             {
-                Seperator sourceStuff = (Seperator)e.Data.GetData(e.Data.GetFormats()[0]);
+                SeperatorEntity sourceStuff = (SeperatorEntity)e.Data.GetData(e.Data.GetFormats()[0]);
 
                 if (sourceStuff.Parent != null)
                 {
@@ -168,7 +168,7 @@ namespace TrayTool.UIControlls
 
         private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
-            ((MainViewModel)DataContext).TreeView_Selected = (Seperator)treeView.SelectedItem;
+            ((MainViewModel)DataContext).TreeView_Selected = (SeperatorEntity)treeView.SelectedItem;
         }
 
         private void TreeView_KeyUp(object sender, KeyEventArgs e)
@@ -204,9 +204,9 @@ namespace TrayTool.UIControlls
         /// </summary>
         /// <param name="item">The presumably ancestor</param>
         /// <returns>True, of is an ancestor, otherwise false</returns>
-        public bool IsAncestor(Seperator item)
+        public bool IsAncestor(SeperatorEntity item)
         {
-            Seperator parent = item.Parent;
+            SeperatorEntity parent = item.Parent;
 
             while (parent != null)
             {

@@ -4,7 +4,7 @@ namespace TrayTool
 {
     public static class ItemExtension
     {
-        public static Item UpdateImage(this Item item)
+        public static ItemEntity UpdateImage(this ItemEntity item)
         {
             item.UpdateImage(item.Path);
             return item;

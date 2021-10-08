@@ -13,7 +13,7 @@ namespace TrayTool.Repository.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Order = table.Column<int>(type: "INTEGER", nullable: false),
-                    DirectoryId = table.Column<Guid>(type: "TEXT", nullable: true),
+                    DirectoryEntityId = table.Column<Guid>(type: "TEXT", nullable: true),
                     Discriminator = table.Column<string>(type: "TEXT", nullable: false),
                     ParentId = table.Column<Guid>(type: "TEXT", nullable: true),
                     Image = table.Column<byte[]>(type: "BLOB", nullable: true),
@@ -25,8 +25,8 @@ namespace TrayTool.Repository.Migrations
                 {
                     table.PrimaryKey("PK_BaseModel", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BaseModel_BaseModel_DirectoryId",
-                        column: x => x.DirectoryId,
+                        name: "FK_BaseModel_BaseModel_DirectoryEntityId",
+                        column: x => x.DirectoryEntityId,
                         principalTable: "BaseModel",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -46,28 +46,28 @@ namespace TrayTool.Repository.Migrations
                     Key = table.Column<string>(type: "TEXT", nullable: true),
                     Value = table.Column<string>(type: "TEXT", nullable: true),
                     Concatenator = table.Column<string>(type: "TEXT", nullable: true),
-                    ItemId = table.Column<Guid>(type: "TEXT", nullable: true)
+                    ItemEntityId = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Arguments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Arguments_BaseModel_ItemId",
-                        column: x => x.ItemId,
+                        name: "FK_Arguments_BaseModel_ItemEntityId",
+                        column: x => x.ItemEntityId,
                         principalTable: "BaseModel",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Arguments_ItemId",
+                name: "IX_Arguments_ItemEntityId",
                 table: "Arguments",
-                column: "ItemId");
+                column: "ItemEntityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BaseModel_DirectoryId",
+                name: "IX_BaseModel_DirectoryEntityId",
                 table: "BaseModel",
-                column: "DirectoryId");
+                column: "DirectoryEntityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BaseModel_ParentId",

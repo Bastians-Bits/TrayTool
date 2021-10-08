@@ -1,6 +1,6 @@
 ﻿namespace TrayTool.Repository.Model
 {
-    public class AbstractItem : Seperator
+    public class AbstractItemEntity : SeperatorEntity
     {
         public string Name { get; set; }
     }

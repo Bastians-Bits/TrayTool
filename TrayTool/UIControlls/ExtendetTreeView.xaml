@@ -30,8 +30,7 @@
         </TreeView.ItemContainerStyle>
         <TreeView.Resources>
             <!-- Directory -->
-            <HierarchicalDataTemplate DataType="{x:Type Model:Directory}" ItemsSource="{Binding Children}">
-                
+            <HierarchicalDataTemplate DataType="{x:Type Model:DirectoryEntity}" ItemsSource="{Binding Children}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15" OpacityMask="White"/>
                     <TextBlock Text="   "/>
@@ -39,7 +38,7 @@
                 </StackPanel>
             </HierarchicalDataTemplate>
             <!-- Item -->
-            <DataTemplate DataType="{x:Type Model:Item}">
+            <DataTemplate DataType="{x:Type Model:ItemEntity}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15" OpacityMask="White"/>
                     <TextBlock Text="   "/>
@@ -47,7 +46,7 @@
                 </StackPanel>
             </DataTemplate>
             <!-- Seperator-->
-            <DataTemplate DataType="{x:Type Model:Seperator}">
+            <DataTemplate DataType="{x:Type Model:SeperatorEntity}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="{Binding Image, Converter={StaticResource imageConver}}" Width="15" OpacityMask="White"/>
                 </StackPanel>

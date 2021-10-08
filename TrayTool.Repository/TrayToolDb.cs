@@ -5,27 +5,28 @@ namespace TrayTool.Repository
 {
     public class TrayToolDb : DbContext
     {
-        public DbSet<BaseModel> BaseModels { get; set; }
-        public DbSet<Seperator> Seperators { get; set; }
-        public DbSet<AbstractItem> AbstractItems { get; set; }
-        public DbSet<Directory> Directories { get; set; }
-        public DbSet<Item> Items { get; set;}
-        public DbSet<Argument> Arguments { get; set; }
+        public DbSet<BaseModelEntity> BaseModels { get; set; }
+        public DbSet<SeperatorEntity> Seperators { get; set; }
+        public DbSet<AbstractItemEntity> AbstractItems { get; set; }
+        public DbSet<DirectoryEntity> Directories { get; set; }
+        public DbSet<ItemEntity> Items { get; set;}
+        public DbSet<ArgumentEntity> Arguments { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
 
             optionsBuilder.UseSqlite("data source=testdb.sqlite;");
+            optionsBuilder.UseLazyLoadingProxies();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<BaseModel>().Property(p => p.Id).ValueGeneratedOnAdd();
+            modelBuilder.Entity<BaseModelEntity>().Property(p => p.Id).ValueGeneratedOnAdd();
 
-            modelBuilder.Entity<BaseModel>().ToTable("BaseModel");
+            modelBuilder.Entity<BaseModelEntity>().ToTable("BaseModel");
         }
     }
 }
