@@ -6,13 +6,13 @@ namespace TrayTool.Repository.Model
     public class DirectoryEntity : AbstractItemEntity
     {
         [NotMapped]
-        private IList<BaseModelEntity> _children;
-        public virtual IList<BaseModelEntity> Children 
+        private IList<SeperatorEntity> _children;
+        public virtual IList<SeperatorEntity> Children 
         {
             get
             {
                 if (_children == null)
-                    _children = new List<BaseModelEntity>();
+                    _children = new List<SeperatorEntity>();
                 return _children;
             }
             set

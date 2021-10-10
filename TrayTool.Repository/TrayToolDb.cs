@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using TrayTool.Repository.Model;
 
 namespace TrayTool.Repository
@@ -24,9 +25,9 @@ namespace TrayTool.Repository
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<BaseModelEntity>().Property(p => p.Id).ValueGeneratedOnAdd();
-
             modelBuilder.Entity<BaseModelEntity>().ToTable("BaseModel");
+
+            modelBuilder.Entity<DirectoryEntity>().HasMany(e => e.Children).WithOne(e => e.Parent).OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

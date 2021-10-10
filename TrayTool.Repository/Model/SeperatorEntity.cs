@@ -4,20 +4,7 @@ namespace TrayTool.Repository.Model
 {
     public class SeperatorEntity : BaseModelEntity
     {
-        [NotMapped]
-        private DirectoryEntity _parent;
-        public virtual DirectoryEntity Parent { 
-            get 
-            {
-                if (_parent == null)
-                    _parent = new DirectoryEntity();
-                return _parent;
-            }
-            set 
-            {
-                _parent = value; 
-            } 
-        }
+        public virtual DirectoryEntity Parent { get; set; }
         [NotMapped]
         public bool IsSelected { get; set; }
         [NotMapped]

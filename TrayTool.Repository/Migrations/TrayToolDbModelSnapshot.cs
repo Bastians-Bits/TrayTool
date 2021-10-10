@@ -47,9 +47,6 @@ namespace TrayTool.Repository.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("DirectoryEntityId")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Discriminator")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -58,8 +55,6 @@ namespace TrayTool.Repository.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DirectoryEntityId");
 
                     b.ToTable("BaseModel");
 
@@ -118,18 +113,12 @@ namespace TrayTool.Repository.Migrations
                         .HasForeignKey("ItemEntityId");
                 });
 
-            modelBuilder.Entity("TrayTool.Repository.Model.BaseModelEntity", b =>
-                {
-                    b.HasOne("TrayTool.Repository.Model.DirectoryEntity", null)
-                        .WithMany("Children")
-                        .HasForeignKey("DirectoryEntityId");
-                });
-
             modelBuilder.Entity("TrayTool.Repository.Model.SeperatorEntity", b =>
                 {
                     b.HasOne("TrayTool.Repository.Model.DirectoryEntity", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
+                        .WithMany("Children")
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Parent");
                 });

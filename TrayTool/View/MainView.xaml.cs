@@ -6,8 +6,6 @@ using System.Windows.Forms;
 using System;
 using System.Collections.Generic;
 using TrayTool.Repository.Model;
-using TrayTool.Repository;
-using Microsoft.EntityFrameworkCore;
 
 namespace TrayTool.View
 {

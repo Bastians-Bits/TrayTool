@@ -13,7 +13,6 @@ namespace TrayTool.Repository.Migrations
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Order = table.Column<int>(type: "INTEGER", nullable: false),
-                    DirectoryEntityId = table.Column<Guid>(type: "TEXT", nullable: true),
                     Discriminator = table.Column<string>(type: "TEXT", nullable: false),
                     ParentId = table.Column<Guid>(type: "TEXT", nullable: true),
                     Image = table.Column<byte[]>(type: "BLOB", nullable: true),
@@ -25,17 +24,11 @@ namespace TrayTool.Repository.Migrations
                 {
                     table.PrimaryKey("PK_BaseModel", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_BaseModel_BaseModel_DirectoryEntityId",
-                        column: x => x.DirectoryEntityId,
-                        principalTable: "BaseModel",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
                         name: "FK_BaseModel_BaseModel_ParentId",
                         column: x => x.ParentId,
                         principalTable: "BaseModel",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -63,11 +56,6 @@ namespace TrayTool.Repository.Migrations
                 name: "IX_Arguments_ItemEntityId",
                 table: "Arguments",
                 column: "ItemEntityId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BaseModel_DirectoryEntityId",
-                table: "BaseModel",
-                column: "DirectoryEntityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BaseModel_ParentId",
