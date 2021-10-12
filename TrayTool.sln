@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.31313.79
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrayTool", "TrayTool\TrayTool.csproj", "{E389A992-6BEF-46E3-995E-CE0DD6AD5570}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrayTool.Repository", "TrayTool.Repository\TrayTool.Repository.csproj", "{AFDA4376-2D1C-42CB-847B-303544256701}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
